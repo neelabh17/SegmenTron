@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import sys
 
+
 cur_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.split(cur_path)[0]
 sys.path.append(root_path)
@@ -12,6 +13,8 @@ import torch
 import torch.nn as nn
 import torch.utils.data as data
 import torch.nn.functional as F
+import cv2
+import numpy as np
 
 from tabulate import tabulate
 from torchvision import transforms
@@ -24,8 +27,18 @@ from segmentron.utils.options import parse_args
 from segmentron.utils.default_setup import default_setup
 
 
+from crf import DenseCRF
+
+
 class Evaluator(object):
     def __init__(self, args):
+        self.postprocessor= DenseCRF(iter_max=cfg.CRF.ITER_MAX,
+                                        pos_xy_std=cfg.CRF.POS_XY_STD,
+                                        pos_w=cfg.CRF.POS_W,
+                                        bi_xy_std=cfg.CRF.BI_XY_STD,
+                                        bi_rgb_std=cfg.CRF.BI_RGB_STD,
+                                        bi_w=cfg.CRF.BI_W,
+                                    )
         self.args = args
         self.device = torch.device(args.device)
 
@@ -76,13 +89,40 @@ class Evaluator(object):
         import time
         time_start = time.time()
         for i, (image, target, filename) in enumerate(self.val_loader):
+            
             image = image.to(self.device)
             target = target.to(self.device)
 
             with torch.no_grad():
                 output = model.evaluate(image)
+            # import pdb; pdb.set_trace()
+            
+            output=F.softmax(output,dim=1)
+            output=output.cpu().numpy()
+            output_post=[]
 
-            self.metric.update(output, target)
+
+            for j,image_file_loc in enumerate(filename):
+                # load in bgr in H W C format
+                raw_image = cv2.imread(image_file_loc, cv2.IMREAD_COLOR).astype(np.float32)
+                mean_bgr=np.array([103.53, 116.28, 123.675])
+                # Do some subtraction
+                raw_image-=mean_bgr
+                # converted to C H W
+                raw_image=raw_image.transpose(2,0,1)
+                raw_image=raw_image.astype(np.uint8)
+                raw_image=raw_image.transpose(1,2,0)
+                # raw_images.append(raw_image)
+
+                prob_post=self.postprocessor(raw_image,output[j])
+                output_post.append(prob_post)
+            
+            output_post=np.array(output_post)
+            output_post=torch.tensor(output_post)
+            output_post=output_post.to(self.device)
+                
+            self.metric.update(output_post, target)
+            # self.metric.update(output, target)
             pixAcc, mIoU = self.metric.get()
             logging.info("Sample: {:d}, validation pixAcc: {:.3f}, mIoU: {:.3f}".format(
                 i + 1, pixAcc * 100, mIoU * 100))
@@ -108,6 +148,7 @@ if __name__ == '__main__':
     cfg.PHASE = 'test'
     cfg.ROOT_PATH = root_path
     cfg.check_and_freeze()
+    # import pdb; pdb.set_trace()
 
     default_setup(args)
 

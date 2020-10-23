@@ -83,7 +83,7 @@ class SegmentationMetric(object):
 def batch_pix_accuracy(output, target):
     """PixAcc"""
     # inputs are numpy array, output 4D, target 3D
-    predict = torch.argmax(output.long(), 1) + 1
+    predict = torch.argmax(output, 1) + 1
     target = target.long() + 1
 
     pixel_labeled = torch.sum(target > 0)#.item()

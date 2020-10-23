@@ -109,7 +109,7 @@ cfg.TEST.FLIP = False
 
 ########################## visual config ###########################################
 # visual result output dir
-cfg.VISUAL.OUTPUT_DIR = '../runs/visual/'
+cfg.VISUAL.OUTPUT_DIR = './runs/visual/'
 
 ########################## model #######################################
 # model name
@@ -210,4 +210,12 @@ cfg.MODEL.HRNET.STAGE4.NUM_BLOCKS = [4, 4, 4, 4]
 cfg.MODEL.HRNET.STAGE4.NUM_CHANNELS = [32, 64, 128, 256]
 cfg.MODEL.HRNET.STAGE4.BLOCK = 'BASIC'
 cfg.MODEL.HRNET.STAGE4.FUSE_METHOD = 'SUM'
+
+########################## CRF Postprocessor ######################################
+cfg.CRF.ITER_MAX= 10
+cfg.CRF.POS_XY_STD= 1
+cfg.CRF.POS_W= 3
+cfg.CRF.BI_XY_STD= 67
+cfg.CRF.BI_RGB_STD= 3
+cfg.CRF.BI_W= 4
 

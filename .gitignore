@@ -105,3 +105,9 @@ venv.bak/
 
 # mac os
 __MACOSX/
+
+
+# my own additions
+datasets/
+weights/
+runs/

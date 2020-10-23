@@ -9,6 +9,7 @@ from .seg_data_base import SegmentationDataset
 
 
 class CitySegmentation(SegmentationDataset):
+    
     """Cityscapes Semantic Segmentation Dataset.
 
     Parameters
@@ -38,11 +39,11 @@ class CitySegmentation(SegmentationDataset):
     BASE_DIR = 'cityscapes'
     NUM_CLASS = 19
 
-    def __init__(self, root='datasets/cityscapes', split='train', mode=None, transform=None, **kwargs):
+    def __init__(self, root='datasets/Foggy_Zurich', split='train', mode=None, transform=None, **kwargs):
         super(CitySegmentation, self).__init__(root, split, mode, transform, **kwargs)
         # self.root = os.path.join(root, self.BASE_DIR)
-        assert os.path.exists(self.root), "Please put dataset in {SEG_ROOT}/datasets/cityscapes"
-        self.images, self.mask_paths = _get_city_pairs(self.root, self.split)
+        assert os.path.exists(self.root), "Please put dataset in {SEG_ROOT}/datasets/Foggy_Zurich"
+        self.images, self.mask_paths = _get_Zurich_pairs(self.root)
         assert (len(self.images) == len(self.mask_paths))
         if len(self.images) == 0:
             raise RuntimeError("Found 0 images in subfolders of:" + root + "\n")
@@ -82,7 +83,8 @@ class CitySegmentation(SegmentationDataset):
         # general resize, normalize and toTensor
         if self.transform is not None:
             img = self.transform(img)
-        return img, mask, os.path.basename(self.images[index])
+        return img, mask, self.images[index]
+        # return img, mask, os.path.basename(self.images[index])
 
     def _mask_transform(self, mask):
         target = self._class_to_index(np.array(mask).astype('int32'))
@@ -142,6 +144,24 @@ def _get_city_pairs(folder, split='train'):
         mask_paths = train_mask_paths + val_mask_paths
     return img_paths, mask_paths
 
+def _get_Zurich_pairs(folder):
+    img_paths = []
+    mask_paths = []
+    # folder="datasets/Foggy_Zurich"
+
+    # Reading gt Label in Cityscape format
+    f=open(os.path.join(folder,"lists_file_names/gt_labelIds_testv2_filenames.txt"),"r")
+    for line in f.readlines():
+        mask_paths.append(os.path.join(folder,line.strip()))
+    f.close()
+    
+    # Reading Image
+    f=open(os.path.join(folder,"lists_file_names/RGB_testv2_filenames.txt"),"r")
+    for line in f.readlines():
+        img_paths.append(os.path.join(folder,line.strip()))
+    f.close()
+
+    return img_paths,mask_paths
 
 if __name__ == '__main__':
     dataset = CitySegmentation()
