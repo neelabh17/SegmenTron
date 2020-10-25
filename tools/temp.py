@@ -94,6 +94,9 @@ class Evaluator(object):
         logging.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
         import time
         time_start = time.time()
+
+        loss_series = list()
+        temp_series = list()
         
         for epoch in range(10):
 
@@ -123,7 +126,13 @@ class Evaluator(object):
                 logging.info("Batch {} loss for Temp Scaling : {}".format(i, loss))
             
             logging.info("Epoch {} loss for Temp Scaling : {}".format(epoch, loss_epoch / (len(self.val_loader))))
-            logging.info("Epoch {} Temp Scaling factor is : {}".format(temp))
+            logging.info("Epoch {} Temp Scaling factor is : {}".format(epoch, temp.item()))
+
+            loss_series.append(loss_epoch)
+            temp_series.append(temp.item())
+
+        print(loss_series)
+        print(temp_series)
 
         synchronize()
         print('Final scaled temp : {}'.format(temp))
