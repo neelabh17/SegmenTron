@@ -54,7 +54,10 @@ def demo():
         with torch.no_grad():
             output = model(images)
         # import pdb;pdb.set_trace()
-        output_prob=F.softmax(output[0],dim=1)
+        # output=output
+        # temp=1
+        temp=3
+        output_prob=F.softmax(output[0]/3,dim=1)
         output_prob=output_prob.cpu().numpy()
 
         raw_image = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32)
@@ -78,7 +81,7 @@ def demo():
         # pred = torch.argmax(output[0], 1).squeeze(0).cpu().data.numpy()
         pred = np.argmax(prob_post, axis=0)
         mask = get_color_pallete(pred, cfg.DATASET.NAME)
-        outname = os.path.splitext(os.path.split(img_path)[-1])[0] + '.png'
+        outname = os.path.splitext(os.path.split(img_path)[-1])[0] + f'_temp_{temp}.png'
         mask.save(os.path.join(output_dir, outname))
 
 

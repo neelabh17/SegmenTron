@@ -1,3 +1,4 @@
+normal un without cali without CRF
 2020-10-23 17:40:25,271 Segmentron INFO: Eval use time: 11.809 second
 2020-10-23 17:40:25,271 Segmentron INFO: End validation pixAcc: 37.575, mIoU: 16.516
 2020-10-23 17:40:25,272 Segmentron INFO: Category iou:
@@ -43,53 +44,54 @@
 |     18     |    bicycle    |     0     |
 +------------+---------------+-----------+
 
-
-2020-10-23 19:17:59,707 Segmentron INFO: load test model from weights/deeplabv3_plus_resnet101_segmentron.pth
-2020-10-23 19:18:01,405 Segmentron INFO: <All keys matched successfully>
-2020-10-23 19:18:01,489 Segmentron INFO: Start validation, Total sample: 10
-2020-10-23 19:19:08,276 Segmentron INFO: Sample: 1, validation pixAcc: 0.026, mIoU: 16.811
-2020-10-23 19:20:10,928 Segmentron INFO: Sample: 2, validation pixAcc: 0.019, mIoU: 16.018
-2020-10-23 19:21:13,076 Segmentron INFO: Sample: 3, validation pixAcc: 0.053, mIoU: 16.069
-2020-10-23 19:22:16,456 Segmentron INFO: Sample: 4, validation pixAcc: 0.041, mIoU: 19.115
-2020-10-23 19:23:19,107 Segmentron INFO: Sample: 5, validation pixAcc: 0.033, mIoU: 18.462
-2020-10-23 19:24:22,566 Segmentron INFO: Sample: 6, validation pixAcc: 0.028, mIoU: 17.442
-2020-10-23 19:25:25,343 Segmentron INFO: Sample: 7, validation pixAcc: 0.025, mIoU: 17.906
-2020-10-23 19:26:27,669 Segmentron INFO: Sample: 8, validation pixAcc: 0.022, mIoU: 17.585
-2020-10-23 19:27:30,509 Segmentron INFO: Sample: 9, validation pixAcc: 0.022, mIoU: 16.745
-2020-10-23 19:28:33,257 Segmentron INFO: Sample: 10, validation pixAcc: 0.021, mIoU: 16.394
-2020-10-23 19:28:33,289 Segmentron INFO: Eval use time: 631.800 second
-2020-10-23 19:28:33,289 Segmentron INFO: End validation pixAcc: 0.021, mIoU: 16.394
-2020-10-23 19:28:33,291 Segmentron INFO: Category iou:
+without crf
+2020-10-24 14:21:44,321 Segmentron INFO: load test model from weights/deeplabv3_plus_resnet101_segmentron.pth
+2020-10-24 14:21:46,034 Segmentron INFO: <All keys matched successfully>
+2020-10-24 14:21:46,119 Segmentron INFO: Start validation, Total sample: 10
+2020-10-24 14:21:53,748 Segmentron INFO: Sample: 1, validation pixAcc: 40.973, mIoU: 17.355
+2020-10-24 14:21:57,470 Segmentron INFO: Sample: 2, validation pixAcc: 35.441, mIoU: 16.128
+2020-10-24 14:22:01,307 Segmentron INFO: Sample: 3, validation pixAcc: 34.059, mIoU: 15.931
+2020-10-24 14:22:05,288 Segmentron INFO: Sample: 4, validation pixAcc: 36.228, mIoU: 18.570
+2020-10-24 14:22:09,380 Segmentron INFO: Sample: 5, validation pixAcc: 35.762, mIoU: 17.880
+2020-10-24 14:22:13,600 Segmentron INFO: Sample: 6, validation pixAcc: 34.879, mIoU: 16.943
+2020-10-24 14:22:17,963 Segmentron INFO: Sample: 7, validation pixAcc: 36.495, mIoU: 17.443
+2020-10-24 14:22:22,420 Segmentron INFO: Sample: 8, validation pixAcc: 36.729, mIoU: 17.529
+2020-10-24 14:22:27,005 Segmentron INFO: Sample: 9, validation pixAcc: 37.009, mIoU: 16.821
+2020-10-24 14:22:31,697 Segmentron INFO: Sample: 10, validation pixAcc: 37.105, mIoU: 16.516
+torch.Size([66047075, 1]) torch.Size([66047075, 1]) torch.Size([66047075, 1])
+2020-10-24 14:22:32,568 Segmentron INFO: Eval use time: 46.449 second
+2020-10-24 14:22:32,568 Segmentron INFO: End validation pixAcc: 37.105, mIoU: 16.516
+2020-10-24 14:22:32,569 Segmentron INFO: Category iou:
  +------------+---------------+-----------+
 |  class id  |  class name   |    iou    |
 +============+===============+===========+
-|     0      |     road      | 0.509522  |
+|     0      |     road      | 0.499235  |
 +------------+---------------+-----------+
-|     1      |   sidewalk    | 0.344158  |
+|     1      |   sidewalk    | 0.344414  |
 +------------+---------------+-----------+
-|     2      |   building    | 0.184644  |
+|     2      |   building    | 0.186088  |
 +------------+---------------+-----------+
-|     3      |     wall      | 0.0127949 |
+|     3      |     wall      | 0.0139034 |
 +------------+---------------+-----------+
-|     4      |     fence     | 0.0876994 |
+|     4      |     fence     | 0.094397  |
 +------------+---------------+-----------+
-|     5      |     pole      | 0.0994743 |
+|     5      |     pole      | 0.125087  |
 +------------+---------------+-----------+
-|     6      | traffic light | 0.494717  |
+|     6      | traffic light | 0.479048  |
 +------------+---------------+-----------+
-|     7      | traffic sign  | 0.358731  |
+|     7      | traffic sign  | 0.363268  |
 +------------+---------------+-----------+
-|     8      |  vegetation   | 0.374002  |
+|     8      |  vegetation   | 0.362423  |
 +------------+---------------+-----------+
-|     9      |    terrain    | 0.0932086 |
+|     9      |    terrain    | 0.0969736 |
 +------------+---------------+-----------+
-|     10     |      sky      | 0.0493179 |
+|     10     |      sky      | 0.0603048 |
 +------------+---------------+-----------+
 |     11     |    person     |     0     |
 +------------+---------------+-----------+
 |     12     |     rider     |     0     |
 +------------+---------------+-----------+
-|     13     |      car      |  0.48791  |
+|     13     |      car      | 0.446532  |
 +------------+---------------+-----------+
 |     14     |     truck     |     0     |
 +------------+---------------+-----------+
@@ -97,12 +99,13 @@
 +------------+---------------+-----------+
 |     16     |     train     |     0     |
 +------------+---------------+-----------+
-|     17     |  motorcycle   | 0.0186067 |
+|     17     |  motorcycle   | 0.0664145 |
 +------------+---------------+-----------+
 |     18     |    bicycle    |     0     |
-+------------+---------------+-----------+ 
++------------+---------------+-----------+
 
 
+with crf but no cali
 2020-10-23 19:56:21,382 Segmentron INFO: load test model from weights/deeplabv3_plus_resnet101_segmentron.pth
 2020-10-23 19:56:23,089 Segmentron INFO: <All keys matched successfully>
 2020-10-23 19:56:23,172 Segmentron INFO: Start validation, Total sample: 10
@@ -160,3 +163,9 @@
 +------------+---------------+-----------+
 |     18     |    bicycle    |     0     |
 +------------+---------------+-----------+
+
+Results for pre-trained no crf on foggy medium
+2020-10-25 11:23:16,530 Segmentron INFO: End validation pixAcc: 92.062, mIoU: 66.170
+
+Results for pre-trained no crf on foggy hard
+2020-10-25 11:27:13,201 Segmentron INFO: End validation pixAcc: 85.324, mIoU: 53.056

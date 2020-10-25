@@ -39,11 +39,12 @@ class CitySegmentation(SegmentationDataset):
     BASE_DIR = 'cityscapes'
     NUM_CLASS = 19
 
-    def __init__(self, root='datasets/Foggy_Zurich', split='train', mode=None, transform=None, **kwargs):
+    def __init__(self, root='datasets', split='train', mode=None, transform=None, **kwargs):
         super(CitySegmentation, self).__init__(root, split, mode, transform, **kwargs)
         # self.root = os.path.join(root, self.BASE_DIR)
         assert os.path.exists(self.root), "Please put dataset in {SEG_ROOT}/datasets/Foggy_Zurich"
-        self.images, self.mask_paths = _get_Zurich_pairs(self.root)
+        # self.images, self.mask_paths = _get_Zurich_pairs(self.root)
+        self.images, self.mask_paths = _get_city_pairs(self.root, self.split)
         assert (len(self.images) == len(self.mask_paths))
         if len(self.images) == 0:
             raise RuntimeError("Found 0 images in subfolders of:" + root + "\n")
@@ -113,11 +114,13 @@ def _get_city_pairs(folder, split='train'):
             for filename in files:
                 if filename.startswith('._'):
                     continue
-                if filename.endswith('.png'):
+                if filename.endswith('0.02.png'):
                     imgpath = os.path.join(root, filename)
+                    # print(imgpath)
                     foldername = os.path.basename(os.path.dirname(imgpath))
-                    maskname = filename.replace('leftImg8bit', 'gtFine_labelIds')
+                    maskname = filename.replace('leftImg8bit_foggy_beta_0.02', 'gtFine_labelIds')
                     maskpath = os.path.join(mask_folder, foldername, maskname)
+                    # print(maskpath)
                     if os.path.isfile(imgpath) and os.path.isfile(maskpath):
                         img_paths.append(imgpath)
                         mask_paths.append(maskpath)
@@ -127,16 +130,16 @@ def _get_city_pairs(folder, split='train'):
         return img_paths, mask_paths
 
     if split in ('train', 'val'):
-        img_folder = os.path.join(folder, 'leftImg8bit/' + split)
+        img_folder = os.path.join(folder, 'leftImg8bit_foggyDBF/' + split)
         mask_folder = os.path.join(folder, 'gtFine/' + split)
         img_paths, mask_paths = get_path_pairs(img_folder, mask_folder)
         return img_paths, mask_paths
     else:
         assert split == 'trainval'
         logging.info('trainval set')
-        train_img_folder = os.path.join(folder, 'leftImg8bit/train')
+        train_img_folder = os.path.join(folder, 'leftImg8bit_foggyDBF/train')
         train_mask_folder = os.path.join(folder, 'gtFine/train')
-        val_img_folder = os.path.join(folder, 'leftImg8bit/val')
+        val_img_folder = os.path.join(folder, 'leftImg8bit_foggyDBF/val')
         val_mask_folder = os.path.join(folder, 'gtFine/val')
         train_img_paths, train_mask_paths = get_path_pairs(train_img_folder, train_mask_folder)
         val_img_paths, val_mask_paths = get_path_pairs(val_img_folder, val_mask_folder)
@@ -165,3 +168,4 @@ def _get_Zurich_pairs(folder):
 
 if __name__ == '__main__':
     dataset = CitySegmentation()
+    print(dataset)

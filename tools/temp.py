@@ -50,9 +50,8 @@ class Evaluator(object):
 
         # dataset and dataloader
         val_dataset = get_segmentation_dataset(cfg.DATASET.NAME, split='val', mode='testval', transform=input_transform)
-
-        # made
-        val_sampler = make_data_sampler(val_dataset, shuffle=False, distributed=args.distributed)
+        # made shuffle true
+        val_sampler = make_data_sampler(val_dataset, shuffle=True, distributed=args.distributed)
         val_batch_sampler = make_batch_data_sampler(val_sampler, images_per_batch=cfg.TEST.BATCH_SIZE, drop_last=False)
         self.val_loader = data.DataLoader(dataset=val_dataset,
                                           batch_sampler=val_batch_sampler,
@@ -87,64 +86,47 @@ class Evaluator(object):
         else:
             model = self.model
 
+        temp = torch.nn.Parameter(torch.ones(1) * 1.5)
+
+        criterion = torch.nn.CrossEntropyLoss(ignore_index=cfg.DATASET.IGNORE_INDEX)
+        optimizer = torch.optim.SGD([temp], lr=0.01)
+
         logging.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
         import time
         time_start = time.time()
-        for i, (image, target, filename) in enumerate(self.val_loader):
-            
-            image = image.to(self.device)
-            target = target.to(self.device)
+        
+        for epoch in range(10):
 
-            with torch.no_grad():
-                output = model.evaluate(image)
-            # import pdb; pdb.set_trace()
+            logging.info("Epoch Started {}".format(epoch))
+            loss_epoch = 0.0
 
-            ### --------- CRF ------------
-            
-            # output=F.softmax(output,dim=1)
-            # output=output.cpu().numpy()
-            # output_post=[]
+            for i, (image, target, filename) in enumerate(self.val_loader):
 
-
-            # for j,image_file_loc in enumerate(filename):
-            #     # load in bgr in H W C format
-            #     raw_image = cv2.imread(image_file_loc, cv2.IMREAD_COLOR).astype(np.float32)
-            #     mean_bgr=np.array([103.53, 116.28, 123.675])
-            #     # Do some subtraction
-            #     raw_image-=mean_bgr
-            #     # converted to C H W
-            #     raw_image=raw_image.transpose(2,0,1)
-            #     raw_image=raw_image.astype(np.uint8)
-            #     raw_image=raw_image.transpose(1,2,0)
-            #     # raw_images.append(raw_image)
-
-            #     prob_post=self.postprocessor(raw_image,output[j])
-            #     output_post.append(prob_post)
-            
-            # output_post=np.array(output_post)
-            # output_post=torch.tensor(output_post)
-            # output_post=output_post.to(self.device)
-
-            ### --------------------------------
+                optimizer.zero_grad()
                 
-            self.metric.update(output, target)
-            # self.metric.update(output, target)
-            pixAcc, mIoU = self.metric.get()
-            logging.info("Sample: {:d}, validation pixAcc: {:.3f}, mIoU: {:.3f}".format(
-                i + 1, pixAcc * 100, mIoU * 100))
+                image = image.to(self.device)
+                # target = target.to(self.device)
+
+                with torch.no_grad():
+                    output = model.evaluate(image)
+
+                output = output.cpu()
+            
+                # print(output.shape)
+                # print(target.shape)
+
+                loss = criterion(output/temp, target)
+                loss_epoch += loss.item()
+                loss.backward()
+                optimizer.step()
+
+                logging.info("Batch {} loss for Temp Scaling : {}".format(i, loss))
+            
+            logging.info("Epoch {} loss for Temp Scaling : {}".format(epoch, loss_epoch / (len(self.val_loader))))
+            logging.info("Epoch {} Temp Scaling factor is : {}".format(temp))
 
         synchronize()
-        pixAcc, mIoU, category_iou = self.metric.get(return_category_iou=True)
-        logging.info('Eval use time: {:.3f} second'.format(time.time() - time_start))
-        logging.info('End validation pixAcc: {:.3f}, mIoU: {:.3f}'.format(
-                pixAcc * 100, mIoU * 100))
-
-        headers = ['class id', 'class name', 'iou']
-        table = []
-        for i, cls_name in enumerate(self.classes):
-            table.append([cls_name, category_iou[i]])
-        logging.info('Category iou: \n {}'.format(tabulate(table, headers, tablefmt='grid', showindex="always",
-                                                           numalign='center', stralign='center')))
+        print('Final scaled temp : {}'.format(temp))
 
 
 if __name__ == '__main__':
