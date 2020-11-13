@@ -86,10 +86,14 @@ class Evaluator(object):
         else:
             model = self.model
 
-        temp = torch.nn.Parameter(torch.ones(1) * 1.5)
+        one_five = torch.ones(1) * 1.5
+        one_five = one_five.to(self.device)
 
-        criterion = torch.nn.CrossEntropyLoss(ignore_index=cfg.DATASET.IGNORE_INDEX)
-        optimizer = torch.optim.SGD([temp], lr=0.01)
+        temp = torch.nn.Parameter(one_five)
+        print(temp)
+
+        criterion = torch.nn.CrossEntropyLoss(ignore_index=cfg.DATASET.IGNORE_INDEX).to(self.device)
+        optimizer = torch.optim.SGD([temp], lr=1)
 
         logging.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
         import time
@@ -108,17 +112,18 @@ class Evaluator(object):
                 optimizer.zero_grad()
                 
                 image = image.to(self.device)
-                # target = target.to(self.device)
+                target = target.to(self.device)
 
                 with torch.no_grad():
                     output = model.evaluate(image)
 
-                output = output.cpu()
-            
+                # output = output.cpu()
+                output = output / temp
                 # print(output.shape)
                 # print(target.shape)
 
-                loss = criterion(output/temp, target)
+
+                loss = criterion(output, target)
                 loss_epoch += loss.item()
                 loss.backward()
                 optimizer.step()

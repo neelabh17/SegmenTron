@@ -29,9 +29,12 @@ def demo():
     cfg.check_and_freeze()
     default_setup(args)
 
+    # temp=1
+    temp=3
+    usingCRF=False
     # output folder
-    output_dir = os.path.join(cfg.VISUAL.OUTPUT_DIR, 'vis_result_{}_{}_{}_{}'.format(
-        cfg.MODEL.MODEL_NAME, cfg.MODEL.BACKBONE, cfg.DATASET.NAME, cfg.TIME_STAMP))
+    output_dir = os.path.join(cfg.VISUAL.OUTPUT_DIR, 'vis_result_{}_{}_{}_{}_temp_{}_crf_{}'.format(
+        cfg.MODEL.MODEL_NAME, cfg.MODEL.BACKBONE, cfg.DATASET.NAME, cfg.TIME_STAMP,temp,usingCRF))
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -55,33 +58,32 @@ def demo():
             output = model(images)
         # import pdb;pdb.set_trace()
         # output=output
-        # temp=1
-        temp=3
-        output_prob=F.softmax(output[0]/3,dim=1)
+        print(img_path)
+        output_prob=F.softmax(output[0]/temp,dim=1)
         output_prob=output_prob.cpu().numpy()
-
-        raw_image = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32)
-        mean_bgr=np.array([103.53, 116.28, 123.675])
-        # Do some subtraction
-        raw_image-=mean_bgr
-        # converted to C H W
-        raw_image=raw_image.transpose(2,0,1)
-        raw_image=raw_image.astype(np.uint8)
-        raw_image=raw_image.transpose(1,2,0)
-        # raw_images.append(raw_image)
-        postprocessor= DenseCRF(iter_max=cfg.CRF.ITER_MAX,
-                                        pos_xy_std=cfg.CRF.POS_XY_STD,
-                                        pos_w=cfg.CRF.POS_W,
-                                        bi_xy_std=cfg.CRF.BI_XY_STD,
-                                        bi_rgb_std=cfg.CRF.BI_RGB_STD,
-                                        bi_w=cfg.CRF.BI_W,
-                                    )
-        prob_post=postprocessor(raw_image,output_prob[0])
-
-        # pred = torch.argmax(output[0], 1).squeeze(0).cpu().data.numpy()
-        pred = np.argmax(prob_post, axis=0)
+        if(usingCRF):
+            raw_image = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32)
+            mean_bgr=np.array([103.53, 116.28, 123.675])
+            # Do some subtraction
+            raw_image-=mean_bgr
+            # converted to C H W
+            raw_image=raw_image.transpose(2,0,1)
+            raw_image=raw_image.astype(np.uint8)
+            raw_image=raw_image.transpose(1,2,0)
+            # raw_images.append(raw_image)
+            postprocessor= DenseCRF(iter_max=cfg.CRF.ITER_MAX,
+                                            pos_xy_std=cfg.CRF.POS_XY_STD,
+                                            pos_w=cfg.CRF.POS_W,
+                                            bi_xy_std=cfg.CRF.BI_XY_STD,
+                                            bi_rgb_std=cfg.CRF.BI_RGB_STD,
+                                            bi_w=cfg.CRF.BI_W,
+                                        )
+            prob_post=postprocessor(raw_image,output_prob[0])
+            pred = np.argmax(prob_post, axis=0)
+        else:
+            pred = torch.argmax(output[0], 1).squeeze(0).cpu().data.numpy()
         mask = get_color_pallete(pred, cfg.DATASET.NAME)
-        outname = os.path.splitext(os.path.split(img_path)[-1])[0] + f'_temp_{temp}.png'
+        outname = os.path.splitext(os.path.split(img_path)[-1])[0] + f'_temp_{temp}_crf_{usingCRF}.png'
         mask.save(os.path.join(output_dir, outname))
 
 

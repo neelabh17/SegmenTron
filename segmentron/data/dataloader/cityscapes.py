@@ -42,6 +42,7 @@ class CitySegmentation(SegmentationDataset):
     def __init__(self, root='datasets', split='train', mode=None, transform=None, **kwargs):
         super(CitySegmentation, self).__init__(root, split, mode, transform, **kwargs)
         # self.root = os.path.join(root, self.BASE_DIR)
+        print(self.root)
         assert os.path.exists(self.root), "Please put dataset in {SEG_ROOT}/datasets/Foggy_Zurich"
         # self.images, self.mask_paths = _get_Zurich_pairs(self.root)
         self.images, self.mask_paths = _get_city_pairs(self.root, self.split)
@@ -92,6 +93,9 @@ class CitySegmentation(SegmentationDataset):
         return torch.LongTensor(np.array(target).astype('int32'))
 
     def __len__(self):
+        # return min(100, len(self.images))
+        # return 2
+        # return 50
         return len(self.images)
 
     @property
@@ -114,11 +118,11 @@ def _get_city_pairs(folder, split='train'):
             for filename in files:
                 if filename.startswith('._'):
                     continue
-                if filename.endswith('0.02.png'):
+                if filename.endswith('0.005.png'):
                     imgpath = os.path.join(root, filename)
                     # print(imgpath)
                     foldername = os.path.basename(os.path.dirname(imgpath))
-                    maskname = filename.replace('leftImg8bit_foggy_beta_0.02', 'gtFine_labelIds')
+                    maskname = filename.replace('leftImg8bit_foggy_beta_0.005', 'gtFine_labelIds')
                     maskpath = os.path.join(mask_folder, foldername, maskname)
                     # print(maskpath)
                     if os.path.isfile(imgpath) and os.path.isfile(maskpath):

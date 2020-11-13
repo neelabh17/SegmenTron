@@ -35,8 +35,9 @@ def default_setup(args):
     setup_logger("Segmentron", save_dir, get_rank(), filename='{}_{}_{}_{}_log.txt'.format(
         cfg.MODEL.MODEL_NAME, cfg.MODEL.BACKBONE, cfg.DATASET.NAME, cfg.TIME_STAMP))
 
-    logging.info("Using {} GPUs".format(num_gpus))
-    logging.info(args)
-    logging.info(json.dumps(cfg, indent=8))
+    # logging.info("Using {} GPUs".format(num_gpus))
+    # logging.info(args)
+    logging.info(json.dumps(cfg.CRF, indent=8))
+    # print(cfg.CRF)
 
     seed_all_rng(None if cfg.SEED < 0 else cfg.SEED + get_rank())

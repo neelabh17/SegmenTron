@@ -1,0 +1,6 @@
+benchmark first 50 images
+2020-11-03 22:40:31,119 Segmentron INFO: End validation pixAcc: 96.555, mIoU: 72.13
+
+varying thetha - aplha
+90 = 2020-11-03 23:13:39,136 Segmentron INFO: End validation pixAcc: 95.297, mIoU: 65.404
+140 = 2020-11-03 23:23:06,063 Segmentron INFO: End validation pixAcc: 95.120, mIoU: 65.177

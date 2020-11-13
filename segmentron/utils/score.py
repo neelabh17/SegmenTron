@@ -1,4 +1,5 @@
 """Evaluation Metrics for Semantic Segmentation"""
+from os import pread
 import torch
 import numpy as np
 from torch import distributed as dist
@@ -83,7 +84,12 @@ class SegmentationMetric(object):
 def batch_pix_accuracy(output, target):
     """PixAcc"""
     # inputs are numpy array, output 4D, target 3D
-    predict = torch.argmax(output, 1) + 1
+
+
+    # --- change here ----
+    # predict = torch.argmax(output, 1) + 1
+    predict = output + 1
+
     target = target.long() + 1
 
     pixel_labeled = torch.sum(target > 0)#.item()
@@ -98,7 +104,12 @@ def batch_intersection_union(output, target, nclass):
     mini = 1
     maxi = nclass
     nbins = nclass
-    predict = torch.argmax(output, 1) + 1
+
+    # --- change here ---
+    # predict = torch.argmax(output, 1) + 1
+    predict = output + 1
+
+
     target = target.float() + 1
 
     predict = predict.float() * (target > 0).float()

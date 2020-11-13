@@ -36,7 +36,8 @@ class DeepLabV3Plus(SegBaseModel):
 
         outputs = list()
         x = self.head(c4, c1)
-        x = F.interpolate(x, size, mode='bilinear', align_corners=True)
+        # switch off if required
+        # x = F.interpolate(x, size, mode='bilinear', align_corners=True)
 
         outputs.append(x)
         if self.aux:

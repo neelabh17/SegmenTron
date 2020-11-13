@@ -9,7 +9,7 @@ TRAIN:
     BATCH_SIZE: 4
     CROP_SIZE: 769
 TEST:
-    BATCH_SIZE: 6
+    BATCH_SIZE: 8
     # CROP_SIZE: (1080, 1920)
     CROP_SIZE: (1025, 2049)
     TEST_MODEL_PATH: weights/deeplabv3_plus_resnet101_segmentron.pth
@@ -21,12 +21,19 @@ MODEL:
     MODEL_NAME: "DeepLabV3_Plus"
     BACKBONE: "resnet101"
 
+# CRF:
+#     ITER_MAX: 10 # used 10 iteration
+#     POS_XY_STD: 3 # θγ, default value in densecrf as 3, but in paper as 1
+#     POS_W: 3 # dont change this
+#     BI_XY_STD: 140 # θα std on prob , use grid, in paper used values from [1, 200] but it can go to bigger values as well, as seen in other repos : [1, 5, 10 , (141) (121)..... 200] here
+#     BI_RGB_STD: 13 #  θβ std on rgb values, use grid, in paper used values from [1, 50] : [1, 5, (11), (13), 18, 23, 28 till 50] here
+#     BI_W: 4 # default value in dense crf as 10 # : [(5,4,10)]
+
 CRF:
-    ITER_MAX: 10
-    POS_XY_STD: 1
-    POS_W: 3
-    BI_XY_STD: 67
-    BI_RGB_STD: 3
-    BI_W: 4
-    
+    ITER_MAX: 10 # used 10 iteration
+    POS_XY_STD: 3 # θγ, default value in densecrf as 3, but in paper as 1
+    POS_W: 3 # dont change this
+    BI_XY_STD: 10 # θα std on prob , use grid, in paper used values from [1, 200] but it can go to bigger values as well, as seen in other repos : [1, 5, 10 , (141) (121)..... 200] here
+    BI_RGB_STD: 1 #  θβ std on rgb values, use grid, in paper used values from [1, 50] : [1, 5, (11), (13), 18, 23, 28 till 50] here
+    BI_W: 5 # default value in dense crf
 

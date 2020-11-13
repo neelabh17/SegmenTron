@@ -70,7 +70,8 @@ class SegBaseModel(nn.Module):
             if flip:
                 outputs += _flip_image(self.forward(_flip_image(cur_img))[0])[..., :height, :width]
 
-            score = _resize_image(outputs, h, w)
+            # score = _resize_image(outputs, h, w)
+            score = outputs
 
             if scores is None:
                 scores = score

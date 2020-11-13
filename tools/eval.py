@@ -3,6 +3,8 @@ from __future__ import print_function
 import os
 import sys
 
+from tqdm.std import tqdm
+
 
 cur_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.split(cur_path)[0]
@@ -99,36 +101,14 @@ class Evaluator(object):
                 output = model.evaluate(image)
             # import pdb; pdb.set_trace()
 
-            ### --------- CRF ------------
-            
-            # output=F.softmax(output,dim=1)
-            # output=output.cpu().numpy()
-            # output_post=[]
+            # do operations here, NOTE : We are saving with batch size of 1
+            # np.save('npy_files_voc/' + os.path.basename(filename[0]).strip('.jpg'), output[0].cpu().numpy())
 
-
-            # for j,image_file_loc in enumerate(filename):
-            #     # load in bgr in H W C format
-            #     raw_image = cv2.imread(image_file_loc, cv2.IMREAD_COLOR).astype(np.float32)
-            #     mean_bgr=np.array([103.53, 116.28, 123.675])
-            #     # Do some subtraction
-            #     raw_image-=mean_bgr
-            #     # converted to C H W
-            #     raw_image=raw_image.transpose(2,0,1)
-            #     raw_image=raw_image.astype(np.uint8)
-            #     raw_image=raw_image.transpose(1,2,0)
-            #     # raw_images.append(raw_image)
-
-            #     prob_post=self.postprocessor(raw_image,output[j])
-            #     output_post.append(prob_post)
-            
-            # output_post=np.array(output_post)
-            # output_post=torch.tensor(output_post)
-            # output_post=output_post.to(self.device)
-
-            ### --------------------------------
+            output = F.interpolate(output, (image.shape[2], image.shape[3]), mode='bilinear', align_corners=True)
+            output = torch.argmax(output, 1)
                 
             self.metric.update(output, target)
-            # self.metric.update(output, target)
+            
             pixAcc, mIoU = self.metric.get()
             logging.info("Sample: {:d}, validation pixAcc: {:.3f}, mIoU: {:.3f}".format(
                 i + 1, pixAcc * 100, mIoU * 100))

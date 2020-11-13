@@ -37,10 +37,11 @@ class VOCSegmentation(SegmentationDataset):
     BASE_DIR = 'VOC2012'
     NUM_CLASS = 21
 
-    def __init__(self, root='datasets/voc', split='train', mode=None, transform=None, **kwargs):
+    def __init__(self, root='datasets/VOCdevkit', split='train', mode=None, transform=None, **kwargs):
         super(VOCSegmentation, self).__init__(root, split, mode, transform, **kwargs)
         _voc_root = os.path.join(root, self.BASE_DIR)
         _mask_dir = os.path.join(_voc_root, 'SegmentationClass')
+        # _image_dir = os.path.join('datasets/Foggy_VOC', 'JPEGImages')
         _image_dir = os.path.join(_voc_root, 'JPEGImages')
         # train/val/test splits are pre-cut
         _splits_dir = os.path.join(_voc_root, 'ImageSets/Segmentation')
@@ -89,7 +90,8 @@ class VOCSegmentation(SegmentationDataset):
         if self.transform is not None:
             img = self.transform(img)
 
-        return img, mask, os.path.basename(self.images[index])
+        # return img, mask, os.path.basename(self.images[index])
+        return img, mask, self.images[index]
 
     def __len__(self):
         return len(self.images)
