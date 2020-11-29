@@ -41,8 +41,12 @@ class VOCSegmentation(SegmentationDataset):
         super(VOCSegmentation, self).__init__(root, split, mode, transform, **kwargs)
         _voc_root = os.path.join(root, self.BASE_DIR)
         _mask_dir = os.path.join(_voc_root, 'SegmentationClass')
-        # _image_dir = os.path.join('datasets/Foggy_VOC', 'JPEGImages')
-        _image_dir = os.path.join(_voc_root, 'JPEGImages')
+
+
+        _image_dir = os.path.join('datasets/Foggy_VOC', 'JPEGImages')
+        # _image_dir = os.path.join(_voc_root, 'JPEGImages')
+
+
         # train/val/test splits are pre-cut
         _splits_dir = os.path.join(_voc_root, 'ImageSets/Segmentation')
         if split == 'train':
@@ -68,7 +72,7 @@ class VOCSegmentation(SegmentationDataset):
 
         if split != 'test':
             assert (len(self.images) == len(self.masks))
-        print('Found {} images in the folder {}'.format(len(self.images), _voc_root))
+        print('Found {} images in the folder {}'.format(len(self.images), _image_dir))
 
     def __getitem__(self, index):
         img = Image.open(self.images[index]).convert('RGB')
@@ -95,6 +99,7 @@ class VOCSegmentation(SegmentationDataset):
 
     def __len__(self):
         return len(self.images)
+        # return 50
 
     def _mask_transform(self, mask):
         target = np.array(mask).astype('int32')

@@ -9,7 +9,7 @@ TRAIN:
     BATCH_SIZE: 4
     CROP_SIZE: 769
 TEST:
-    BATCH_SIZE: 8
+    BATCH_SIZE: 4
     # CROP_SIZE: (1080, 1920)
     CROP_SIZE: (1025, 2049)
     TEST_MODEL_PATH: weights/deeplabv3_plus_resnet101_segmentron.pth

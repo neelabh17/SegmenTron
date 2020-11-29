@@ -1,0 +1,150 @@
+Temp=0.05 + crf
+End validation pixAcc: 93.910, mIoU: 74.569
+
+Temp=0.1 + crf
+End validation pixAcc: 93.933, mIoU: 74.614
+
+Temp=0.15 + crf
+End validation pixAcc: 93.943, mIoU: 74.629
+
+Temp=0.2 + crf
+End validation pixAcc: 93.949, mIoU: 74.631
+
+Temp=0.25 + crf
+End validation pixAcc: 93.951, mIoU: 74.629
+
+Temp=0.3 + crf
+End validation pixAcc: 93.953, mIoU: 74.624
+
+Temp=0.35 + crf
+End validation pixAcc: 93.953, mIoU: 74.617
+
+Temp=0.4 + crf
+End validation pixAcc: 93.953, mIoU: 74.609
+
+Temp=0.45 + crf
+End validation pixAcc: 93.952, mIoU: 74.601
+
+Temp=0.5 + crf
+End validation pixAcc: 93.951, mIoU: 74.592
+
+Temp=0.55 + crf
+End validation pixAcc: 93.951, mIoU: 74.585
+
+Temp=0.6 + crf
+End validation pixAcc: 93.950, mIoU: 74.577
+
+Temp=0.65 + crf
+End validation pixAcc: 93.949, mIoU: 74.569
+
+Temp=0.7 + crf
+End validation pixAcc: 93.948, mIoU: 74.562
+
+Temp=0.75 + crf
+End validation pixAcc: 93.947, mIoU: 74.555
+
+Temp=0.8 + crf
+End validation pixAcc: 93.946, mIoU: 74.547
+
+Temp=0.85 + crf
+End validation pixAcc: 93.945, mIoU: 74.541
+
+Temp=0.9 + crf
+End validation pixAcc: 93.944, mIoU: 74.534
+
+Temp=0.95 + crf
+End validation pixAcc: 93.943, mIoU: 74.528
+
+Temp=1.0 + crf
+End validation pixAcc: 93.942, mIoU: 74.522
+
+Temp=1.05 + crf
+End validation pixAcc: 93.941, mIoU: 74.516
+
+Temp=1.1 + crf
+End validation pixAcc: 93.940, mIoU: 74.510
+
+Temp=1.15 + crf
+End validation pixAcc: 93.939, mIoU: 74.504
+
+Temp=1.2 + crf
+End validation pixAcc: 93.938, mIoU: 74.498
+
+Temp=1.25 + crf
+End validation pixAcc: 93.937, mIoU: 74.493
+
+Temp=1.3 + crf
+End validation pixAcc: 93.937, mIoU: 74.488
+
+Temp=1.35 + crf
+End validation pixAcc: 93.936, mIoU: 74.483
+
+Temp=1.4 + crf
+End validation pixAcc: 93.935, mIoU: 74.478
+
+Temp=1.45 + crf
+End validation pixAcc: 93.934, mIoU: 74.472
+
+Temp=1.5 + crf
+End validation pixAcc: 93.933, mIoU: 74.467
+
+Temp=1.55 + crf
+End validation pixAcc: 93.932, mIoU: 74.462
+
+Temp=1.6 + crf
+End validation pixAcc: 93.932, mIoU: 74.458
+
+Temp=1.65 + crf
+End validation pixAcc: 93.931, mIoU: 74.453
+
+Temp=1.7 + crf
+End validation pixAcc: 93.930, mIoU: 74.448
+
+Temp=1.75 + crf
+End validation pixAcc: 93.929, mIoU: 74.443
+
+Temp=1.8 + crf
+End validation pixAcc: 93.928, mIoU: 74.438
+
+Temp=1.85 + crf
+End validation pixAcc: 93.927, mIoU: 74.433
+
+Temp=1.9 + crf
+End validation pixAcc: 93.927, mIoU: 74.428
+
+Temp=1.95 + crf
+End validation pixAcc: 93.926, mIoU: 74.424
+
+Temp=2.0 + crf
+End validation pixAcc: 93.925, mIoU: 74.419
+
+Temp=2.05 + crf
+End validation pixAcc: 93.924, mIoU: 74.414
+
+Temp=2.1 + crf
+End validation pixAcc: 93.924, mIoU: 74.410
+
+Temp=2.15 + crf
+End validation pixAcc: 93.923, mIoU: 74.406
+
+Temp=2.2 + crf
+End validation pixAcc: 93.922, mIoU: 74.401
+
+Temp=2.25 + crf
+End validation pixAcc: 93.921, mIoU: 74.396
+
+Temp=2.3 + crf
+End validation pixAcc: 93.920, mIoU: 74.391
+
+Temp=2.35 + crf
+End validation pixAcc: 93.920, mIoU: 74.387
+
+Temp=2.4 + crf
+End validation pixAcc: 93.919, mIoU: 74.382
+
+Temp=2.45 + crf
+End validation pixAcc: 93.918, mIoU: 74.378
+
+Temp=2.5 + crf
+End validation pixAcc: 93.917, mIoU: 74.372
+

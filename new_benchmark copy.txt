@@ -1,0 +1,15 @@
+T=1 + crf
+Pixel Accuracy :  90.1846016417111
+Mean IoU :  55.044132471084595
+
+T=1 + no crf
+ECE with probabilties 0.084424
+0.8999605273756223 0.5553351
+Pixel Accuracy :  89.99605273756222
+Mean IoU :  55.53351044654846
+
+T=1.7 + no crf
+ECE with probabilties 0.021193
+0.8999605273756223 0.5553351
+Pixel Accuracy :  89.99605273756222
+Mean IoU :  55.53351044654846

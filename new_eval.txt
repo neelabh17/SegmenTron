@@ -1,0 +1,16 @@
+Everything is on foggy VOC
+
+baseline result without any changes in eval
+pixAcc: 93.832, mIoU: 74.348
+
+Now below is change in eval result
+
+baseline without any crf
+pixAcc: 93.573, mIoU: 73.335, thresh=0.5
+pixAcc: 91.235, mIoU: 64.934, thresh=0.7
+pixAcc: 86.158, mIoU: 51.213, thresh=0.9
+
+CRF
+pixAcc: 93.942, mIoU: 74.522, thresh=0.5
+pixAcc: 93.942, mIoU: 74.521, thresh=0.7
+pixAcc: 93.942, mIoU: 74.521, thresh=0.9

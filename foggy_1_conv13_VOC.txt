@@ -1,0 +1,10 @@
+T=1 no crf
+pixAcc: 95.342, mIoU: 79.100
+
+
+T=1 + crf
+pixAcc: 95.224, mIoU: 78.150
+
+
+T=1.7 + crf
+95.181, mIoU: 77.973

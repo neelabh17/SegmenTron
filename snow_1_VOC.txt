@@ -1,0 +1,21 @@
+//----------- conv 9--------------//
+
+T=1 + no crf
+pixAcc: 93.832, mIoU: 74.348
+
+T=0.9 + crf
+93.944, mIoU: 74.534
+
+T=1 + crf
+pixAcc: 93.942, mIoU: 74.522
+
+
+T=1.7+ crf
+pixAcc: 93.930, mIoU: 74.448
+
+T=1.8+ crf
+pixAcc: 93.928, mIoU: 74.438
+
+T=2 + crf
+pixAcc: 93.925, mIoU: 74.419
+

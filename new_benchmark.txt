@@ -315,3 +315,84 @@ Mean IoU :  59.7955584526062
 
 baseline(calibrated) + crf
 
+//New pipeline calculations-------------------------------------------------
+
+no cali + no crf
+ECE with probabilties 0.087697
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+1.7 cali + no crf
+ECE with probabilties 0.021752
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+2 cali + no crf
+ECE with probabilties 0.052376
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+1.85 cali + no crf
+ECE with probabilties 0.030212
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+1.8 cali + no crf
+ECE with probabilties 0.025578
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+1.75 cali + no crf
+ECE with probabilties 0.022684
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+1.65 cali + no crf
+ECE with probabilties 0.023400
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+1.85 cali +  crf
+Pixel Accuracy :  90.36435467012424
+Mean IoU :  59.57971215248108
+
+2 cali +  crf
+Pixel Accuracy :  90.36863011394686
+Mean IoU :  59.592413902282715
+
+3 cali +  crf
+Pixel Accuracy :  90.46616413554608
+Mean IoU :  60.00196933746338
+
+3 cali + no crf
+ECE with probabilties 0.276098
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+4 cali + no crf
+ECE with probabilties 0.453278
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+4 cali +  crf
+Pixel Accuracy :  90.52293688427714
+Mean IoU :  60.2643609046936
+
+5 cali + no crf
+ECE with probabilties 0.561547
+0.9043162124458153 0.6034171
+Pixel Accuracy :  90.43162124458152
+Mean IoU :  60.34170985221863
+
+5 cali +  crf
+Pixel Accuracy :  90.53914191891482
+Mean IoU :  60.35689115524292

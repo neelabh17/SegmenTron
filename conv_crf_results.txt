@@ -1,0 +1,40 @@
+We are using pos, bi params as used by deeplab v2 on voc
+
+score without crf on normal pascal 
+pixAcc: 96.614, mIoU: 84.574
+
+score with crf on normal pascal Conv7
+pixAcc: 96.736, mIoU: 84.872
+
+score with crf on normal pascal Conv13
+pixAcc: 96.726, mIoU: 84.761
+
+score with crf on normal pascal Conv11
+validation pixAcc: 96.744, mIoU: 84.846
+
+score with crf on normal pascal Conv9
+validation pixAcc: 96.748, mIoU: 84.887
+
+score with crf on normal pascal Conv5
+pixAcc: 96.707, mIoU: 84.801
+
+score with crf on normal pascal Conv3
+End validation pixAcc: 96.669, mIoU: 84.699
+
+foggy voc
+no crf
+End validation pixAcc: 90.432, mIoU: 60.342
+
+crf + T=1
+
+crf + T=1.8
+End validation pixAcc: 90.476, mIoU: 60.150
+
+crf + T=3
+ 90.456, mIoU: 60.031
+
+crf + T=2
+90.473, mIoU: 60.130
+
+crf + T=1.8
+pixAcc: 90.478, mIoU: 60.161

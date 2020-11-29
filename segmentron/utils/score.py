@@ -84,16 +84,21 @@ class SegmentationMetric(object):
 def batch_pix_accuracy(output, target):
     """PixAcc"""
     # inputs are numpy array, output 4D, target 3D
-
-
+    # Expect already taken softmax here
+    # output = [bs, 21, H, W]
     # --- change here ----
-    # predict = torch.argmax(output, 1) + 1
-    predict = output + 1
+    predict = torch.argmax(output, dim=1) + 1
+    probs = torch.max(output, dim=1)[0]
+    threshold = 0.9
+    
+    # predict = output + 1
+    # print(predict.shape)
+    # print(probs.shape)
 
     target = target.long() + 1
 
-    pixel_labeled = torch.sum(target > 0)#.item()
-    pixel_correct = torch.sum((predict == target) * (target > 0))#.item()
+    pixel_labeled = torch.sum(target > 0) #.item()
+    pixel_correct = torch.sum((predict == target) * (target > 0) * (probs > threshold))#.item()
     assert pixel_correct <= pixel_labeled, "Correct area should be smaller than Labeled"
     return pixel_correct, pixel_labeled
 
@@ -106,14 +111,17 @@ def batch_intersection_union(output, target, nclass):
     nbins = nclass
 
     # --- change here ---
-    # predict = torch.argmax(output, 1) + 1
-    predict = output + 1
+    predict = torch.argmax(output, 1) + 1
+    # predict = output + 1
+
+    probs = torch.max(output, dim=1)[0]
+    threshold = 0.9
 
 
     target = target.float() + 1
 
     predict = predict.float() * (target > 0).float()
-    intersection = predict * (predict == target).float()
+    intersection = predict * (predict == target).float() * (probs > threshold).float()
     # areas of intersection and union
     # element 0 in intersection occur the main difference from np.bincount. set boundary to -1 is necessary.
     area_inter = torch.histc(intersection.cpu(), bins=nbins, min=mini, max=maxi)

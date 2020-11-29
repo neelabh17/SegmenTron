@@ -18,6 +18,7 @@ from segmentron.utils.options import parse_args
 from segmentron.utils.default_setup import default_setup
 from segmentron.config import cfg
 from crf import DenseCRF
+from crfasrnn.crfrnn import CrfRnn
 
 
 
@@ -29,9 +30,10 @@ def demo():
     cfg.check_and_freeze()
     default_setup(args)
 
-    # temp=1
-    temp=3
+    temp=1.8
+    # temp=3
     usingCRF=False
+    usingCRF=True
     # output folder
     output_dir = os.path.join(cfg.VISUAL.OUTPUT_DIR, 'vis_result_{}_{}_{}_{}_temp_{}_crf_{}'.format(
         cfg.MODEL.MODEL_NAME, cfg.MODEL.BACKBONE, cfg.DATASET.NAME, cfg.TIME_STAMP,temp,usingCRF))
@@ -58,30 +60,40 @@ def demo():
             output = model(images)
         # import pdb;pdb.set_trace()
         # output=output
-        print(img_path)
-        output_prob=F.softmax(output[0]/temp,dim=1)
-        output_prob=output_prob.cpu().numpy()
+        _, H, W = images[0].shape
+        logit = F.interpolate(output[0], size=(H, W), mode="bilinear", align_corners=True)
+
+        print(img_path,logit.shape)
+        logit/=temp
+        # output_prob=F.softmax(logit/temp,dim=1)
+        # output_prob=output_prob.cpu().numpy()
         if(usingCRF):
-            raw_image = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32)
-            mean_bgr=np.array([103.53, 116.28, 123.675])
-            # Do some subtraction
-            raw_image-=mean_bgr
-            # converted to C H W
-            raw_image=raw_image.transpose(2,0,1)
-            raw_image=raw_image.astype(np.uint8)
-            raw_image=raw_image.transpose(1,2,0)
+            # raw_image = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32)
+            # mean_bgr=np.array([103.53, 116.28, 123.675])
+            # # Do some subtraction
+            # raw_image-=mean_bgr
+            # # converted to C H W
+            # raw_image=raw_image.transpose(2,0,1)
+            # raw_image=raw_image.astype(np.uint8)
+            # raw_image=raw_image.transpose(1,2,0)
             # raw_images.append(raw_image)
-            postprocessor= DenseCRF(iter_max=cfg.CRF.ITER_MAX,
-                                            pos_xy_std=cfg.CRF.POS_XY_STD,
-                                            pos_w=cfg.CRF.POS_W,
-                                            bi_xy_std=cfg.CRF.BI_XY_STD,
-                                            bi_rgb_std=cfg.CRF.BI_RGB_STD,
-                                            bi_w=cfg.CRF.BI_W,
-                                        )
-            prob_post=postprocessor(raw_image,output_prob[0])
-            pred = np.argmax(prob_post, axis=0)
+            # postprocessor= DenseCRF(iter_max=cfg.CRF.ITER_MAX,
+            #                                 pos_xy_std=cfg.CRF.POS_XY_STD,
+            #                                 pos_w=cfg.CRF.POS_W,
+            #                                 bi_xy_std=cfg.CRF.BI_XY_STD,
+            #                                 bi_rgb_std=cfg.CRF.BI_RGB_STD,
+            #                                 bi_w=cfg.CRF.BI_W,
+            #                             )
+            postprocessor = CrfRnn(21)
+            raw_image = cv2.imread(img_path, cv2.IMREAD_COLOR).astype(np.float32).transpose(2, 0, 1)
+
+            raw_image = torch.from_numpy(raw_image).unsqueeze(dim=0)
+            
+            prob_post=postprocessor(raw_image,logit.cpu().softmax(dim=1))
+            print(prob_post.shape)
+            pred = np.argmax(prob_post.squeeze(0).detach().numpy(), axis=0)
         else:
-            pred = torch.argmax(output[0], 1).squeeze(0).cpu().data.numpy()
+            pred = torch.argmax(logit, 1).squeeze(0).cpu().data.numpy()
         mask = get_color_pallete(pred, cfg.DATASET.NAME)
         outname = os.path.splitext(os.path.split(img_path)[-1])[0] + f'_temp_{temp}_crf_{usingCRF}.png'
         mask.save(os.path.join(output_dir, outname))
