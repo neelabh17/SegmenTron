@@ -50,8 +50,8 @@ default_conf = {
     'merge': True,
     'norm': 'none',
     'weight': 'vector',
-    "unary_weight": 1,
-    "weight_init": 0.10, # 0.5
+    "unary_weight": 3,
+    "weight_init": 0.5, #pairwise 
 
     'trainable': False,
     'convcomp': False,
@@ -590,8 +590,9 @@ class ConvCRF(nn.Module):
             if self.weight is None:
                 prediction = lg_unary + message
             else:
-                prediction = (self.unary_weight - self.weight) * lg_unary + \
-                    self.weight * message
+                prediction = (self.unary_weight) * lg_unary + self.weight * message
+                # prediction = (self.unary_weight - self.weight) * lg_unary + \
+                #     self.weight * message
 
             if not i == num_iter - 1 or self.final_softmax:
                 if self.conf['softmax']:

@@ -1,0 +1,100 @@
+Temp: 0.1 	 pixAcc: 37.035, mIoU: 16.657 
+Temp: 0.1 	 CCE Loss: 0.0630517303943634
+Temp: 0.2 	 pixAcc: 37.029, mIoU: 16.642 
+Temp: 0.2 	 CCE Loss: 0.06266491860151291
+Temp: 0.3 	 pixAcc: 37.018, mIoU: 16.616 
+Temp: 0.3 	 CCE Loss: 0.06226794794201851
+Temp: 0.4 	 pixAcc: 37.008, mIoU: 16.592 
+Temp: 0.4 	 CCE Loss: 0.06185679882764816
+Temp: 0.5 	 pixAcc: 36.996, mIoU: 16.559 
+Temp: 0.5 	 CCE Loss: 0.06142876297235489
+Temp: 0.6 	 pixAcc: 36.986, mIoU: 16.527 
+Temp: 0.6 	 CCE Loss: 0.0609779991209507
+Temp: 0.7 	 pixAcc: 36.978, mIoU: 16.507 
+Temp: 0.7 	 CCE Loss: 0.06055612489581108
+Temp: 0.8 	 pixAcc: 36.970, mIoU: 16.479 
+Temp: 0.8 	 CCE Loss: 0.06017088145017624
+Temp: 0.9 	 pixAcc: 36.962, mIoU: 16.461 
+Temp: 0.9 	 CCE Loss: 0.05975908786058426
+Temp: 1.0 	 pixAcc: 36.955, mIoU: 16.441 
+Temp: 1.0 	 CCE Loss: 0.059395819902420044
+Temp: 1.1 	 pixAcc: 36.950, mIoU: 16.425 
+Temp: 1.1 	 CCE Loss: 0.05896218866109848
+Temp: 1.2 	 pixAcc: 36.945, mIoU: 16.410 
+Temp: 1.2 	 CCE Loss: 0.05844736099243164
+Temp: 1.3 	 pixAcc: 36.940, mIoU: 16.393 
+Temp: 1.3 	 CCE Loss: 0.05787162110209465
+Temp: 1.4 	 pixAcc: 36.936, mIoU: 16.374 
+Temp: 1.4 	 CCE Loss: 0.057223930954933167
+Temp: 1.5 	 pixAcc: 36.932, mIoU: 16.354 
+Temp: 1.5 	 CCE Loss: 0.05657631903886795
+Temp: 1.6 	 pixAcc: 36.929, mIoU: 16.340 
+Temp: 1.6 	 CCE Loss: 0.055871449410915375
+Temp: 1.7 	 pixAcc: 36.925, mIoU: 16.331 
+Temp: 1.7 	 CCE Loss: 0.05520051345229149
+Temp: 1.8 	 pixAcc: 36.922, mIoU: 16.321 
+Temp: 1.8 	 CCE Loss: 0.05454977601766586
+Temp: 1.9 	 pixAcc: 36.919, mIoU: 16.306 
+Temp: 1.9 	 CCE Loss: 0.05387157201766968
+Temp: 2.0 	 pixAcc: 36.916, mIoU: 16.296 
+Temp: 2.0 	 CCE Loss: 0.053164735436439514
+Temp: 2.1 	 pixAcc: 36.914, mIoU: 16.288 
+Temp: 2.1 	 CCE Loss: 0.05256039649248123
+Temp: 2.2 	 pixAcc: 36.912, mIoU: 16.272 
+Temp: 2.2 	 CCE Loss: 0.05213196575641632
+Temp: 2.3 	 pixAcc: 36.909, mIoU: 16.263 
+Temp: 2.3 	 CCE Loss: 0.051718905568122864
+Temp: 2.4 	 pixAcc: 36.907, mIoU: 16.254 
+Temp: 2.4 	 CCE Loss: 0.05132737010717392
+Temp: 2.5 	 pixAcc: 36.905, mIoU: 16.248 
+Temp: 2.5 	 CCE Loss: 0.050985001027584076
+Temp: 2.6 	 pixAcc: 36.903, mIoU: 16.243 
+Temp: 2.6 	 CCE Loss: 0.05061650276184082
+Temp: 2.7 	 pixAcc: 36.902, mIoU: 16.229 
+Temp: 2.7 	 CCE Loss: 0.05022791773080826
+Temp: 2.8 	 pixAcc: 36.900, mIoU: 16.223 
+Temp: 2.8 	 CCE Loss: 0.04996715486049652
+Temp: 2.9 	 pixAcc: 36.899, mIoU: 16.219 
+Temp: 2.9 	 CCE Loss: 0.04995471239089966
+Temp: 3.0 	 pixAcc: 36.897, mIoU: 16.214 
+Temp: 3.0 	 CCE Loss: 0.04982020705938339
+Temp: 3.1 	 pixAcc: 36.896, mIoU: 16.207 
+Temp: 3.1 	 CCE Loss: 0.04978952184319496
+Temp: 3.2 	 pixAcc: 36.894, mIoU: 16.191 
+Temp: 3.2 	 CCE Loss: 0.04997491091489792
+Temp: 3.3 	 pixAcc: 36.893, mIoU: 16.187 
+Temp: 3.3 	 CCE Loss: 0.04984648525714874
+Temp: 3.4 	 pixAcc: 36.892, mIoU: 16.181 
+Temp: 3.4 	 CCE Loss: 0.049663953483104706
+Temp: 3.5 	 pixAcc: 36.891, mIoU: 16.177 
+Temp: 3.5 	 CCE Loss: 0.04987882450222969
+Temp: 3.6 	 pixAcc: 36.890, mIoU: 16.173 
+Temp: 3.6 	 CCE Loss: 0.04999390244483948
+Temp: 3.7 	 pixAcc: 36.889, mIoU: 16.170 
+Temp: 3.7 	 CCE Loss: 0.04987623542547226
+Temp: 3.8 	 pixAcc: 36.888, mIoU: 16.166 
+Temp: 3.8 	 CCE Loss: 0.04962727054953575
+Temp: 3.9 	 pixAcc: 36.886, mIoU: 16.163 
+Temp: 3.9 	 CCE Loss: 0.04978300631046295
+Temp: 4.0 	 pixAcc: 36.886, mIoU: 16.157 
+Temp: 4.0 	 CCE Loss: 0.049998559057712555
+Temp: 4.1 	 pixAcc: 36.885, mIoU: 16.154 
+Temp: 4.1 	 CCE Loss: 0.05004289373755455
+Temp: 4.2 	 pixAcc: 36.884, mIoU: 16.152 
+Temp: 4.2 	 CCE Loss: 0.04995930194854736
+Temp: 4.3 	 pixAcc: 36.883, mIoU: 16.148 
+Temp: 4.3 	 CCE Loss: 0.049929652363061905
+Temp: 4.4 	 pixAcc: 36.882, mIoU: 16.143 
+Temp: 4.4 	 CCE Loss: 0.049967728555202484
+Temp: 4.5 	 pixAcc: 36.881, mIoU: 16.138 
+Temp: 4.5 	 CCE Loss: 0.05061161518096924
+Temp: 4.6 	 pixAcc: 36.881, mIoU: 16.135 
+Temp: 4.6 	 CCE Loss: 0.05114893987774849
+Temp: 4.7 	 pixAcc: 36.880, mIoU: 16.131 
+Temp: 4.7 	 CCE Loss: 0.0516745001077652
+Temp: 4.8 	 pixAcc: 36.879, mIoU: 16.126 
+Temp: 4.8 	 CCE Loss: 0.05211174860596657
+Temp: 4.9 	 pixAcc: 36.878, mIoU: 16.123 
+Temp: 4.9 	 CCE Loss: 0.052384063601493835
+Temp: 5.0 	 pixAcc: 36.878, mIoU: 16.121 
+Temp: 5.0 	 CCE Loss: 0.05254235863685608

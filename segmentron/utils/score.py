@@ -98,7 +98,8 @@ def batch_pix_accuracy(output, target):
     target = target.long() + 1
 
     pixel_labeled = torch.sum(target > 0) #.item()
-    pixel_correct = torch.sum((predict == target) * (target > 0) * (probs > threshold))#.item()
+    pixel_correct = torch.sum((predict == target) * (target > 0))#.item()
+    # pixel_correct = torch.sum((predict == target) * (target > 0) * (probs > threshold))#.item()
     assert pixel_correct <= pixel_labeled, "Correct area should be smaller than Labeled"
     return pixel_correct, pixel_labeled
 
@@ -121,7 +122,8 @@ def batch_intersection_union(output, target, nclass):
     target = target.float() + 1
 
     predict = predict.float() * (target > 0).float()
-    intersection = predict * (predict == target).float() * (probs > threshold).float()
+    intersection = predict.float() * (predict == target).float() 
+    # intersection = predict * (predict == target).float() * (probs > threshold).float()
     # areas of intersection and union
     # element 0 in intersection occur the main difference from np.bincount. set boundary to -1 is necessary.
     area_inter = torch.histc(intersection.cpu(), bins=nbins, min=mini, max=maxi)

@@ -1,0 +1,11 @@
+T = 1 + CRF, bi-linear wt = 0.5
+pixAcc: 93.720, mIoU: 69.285
+
+T = 1.7 + CRF, bi-linear wt = 0.5
+pixAcc: 93.615, mIoU: 68.884
+
+T = 1.7 + CRF, bi-linear wt = 0.25
+validation pixAcc: 93.848, mIoU: 69.767
+
+T = 1 + CRF, bi-linear wt = 0.25
+pixAcc: 94.014, mIoU: 70.391

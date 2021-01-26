@@ -102,7 +102,7 @@ class Evaluator(object):
                 output = model.evaluate(image)
                 # output = torch.softmax(output, dim=1)
 
-                # output /=1.7 
+                output /= 3
 
                 # if use CRF
                 filename = filename[0]

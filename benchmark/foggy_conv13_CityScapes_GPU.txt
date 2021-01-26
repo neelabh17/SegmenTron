@@ -1,0 +1,23 @@
+Temp=1 + crf
+End validation pixAcc: 94.626, mIoU: 72.735
+
+Temp=1.7 + crf
+End validation pixAcc: 93.720, mIoU: 69.285
+
+Temp=0.001 + crf
+End validation pixAcc: 94.639, mIoU: 72.773
+
+//----------------------- pascal -----------------------//
+Temp=1.7 + crf with w[2] = 0.25
+pixAcc: 95.268, mIoU: 78.288
+
+Temp=1 + crf with w[2] = 0.25
+pixAcc: 95.335, mIoU: 78.587
+
+Temp=1 + crf with w[2] = 0.1
+validation pixAcc: 95.446, mIoU: 79.116
+
+
+//----------------------- pascal -----------------------//Temp=1.5 + crf
+End validation pixAcc: 94.244, mIoU: 71.240
+

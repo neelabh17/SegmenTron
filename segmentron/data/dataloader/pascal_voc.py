@@ -98,8 +98,8 @@ class VOCSegmentation(SegmentationDataset):
         return img, mask, self.images[index]
 
     def __len__(self):
-        return len(self.images)
-        # return 50
+        # return len(self.images)
+        return 1
 
     def _mask_transform(self, mask):
         target = np.array(mask).astype('int32')

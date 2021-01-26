@@ -118,3 +118,12 @@ eceData/
 images/
 npy*
 *.pickl
+*.pickle
+experiments/maxECE/comparisionImages
+experiments/classCali/comparisionImages
+experiments/classCali_full_CRF/comparisionImages
+tb_test/
+logs/
+cce_toy_logs/
+cce_logs/
+cce_cityscapes_logs/

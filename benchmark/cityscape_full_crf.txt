@@ -1,0 +1,6 @@
+On 100 samples
+Calibrated + CRF metrics :
+2020-12-12 14:05:23,830 Segmentron INFO: pixAcc: 96.555, mIoU: 71.097
+Uncalibrated + CRF metrics :
+2020-12-12 14:05:23,830 Segmentron INFO: pixAcc: 96.667, mIoU: 71.663
+2020-12-12 14:05:23,830 Segmentron INFO: Eval use time: 2172.323 second

@@ -41,8 +41,9 @@ class CitySegmentation(SegmentationDataset):
 
     def __init__(self, root='datasets', split='train', mode=None, transform=None, **kwargs):
         super(CitySegmentation, self).__init__(root, split, mode, transform, **kwargs)
+        
         # self.root = os.path.join(root, self.BASE_DIR)
-        print(self.root)
+        print(self.root, "ok")
         assert os.path.exists(self.root), "Please put dataset in {SEG_ROOT}/datasets/Foggy_Zurich"
         # self.images, self.mask_paths = _get_Zurich_pairs(self.root)
         self.images, self.mask_paths = _get_city_pairs(self.root, self.split)
@@ -94,9 +95,9 @@ class CitySegmentation(SegmentationDataset):
 
     def __len__(self):
         # return min(100, len(self.images))
-        # return 2
-        # return 50
-        return len(self.images)
+        return 1
+        # return 200
+        # return len(self.images)
 
     @property
     def pred_offset(self):
@@ -154,7 +155,7 @@ def _get_city_pairs(folder, split='train'):
 def _get_Zurich_pairs(folder):
     img_paths = []
     mask_paths = []
-    # folder="datasets/Foggy_Zurich"
+    folder="datasets/Foggy_Zurich"
 
     # Reading gt Label in Cityscape format
     f=open(os.path.join(folder,"lists_file_names/gt_labelIds_testv2_filenames.txt"),"r")

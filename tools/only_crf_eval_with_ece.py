@@ -134,7 +134,7 @@ class Evaluator(object):
         self.classes = val_dataset.classes
         self.metric = SegmentationMetric(val_dataset.num_class, args.distributed)
 
-        self.postprocessor = CrfRnn(len(self.classes))
+        # self.postprocessor = CrfRnn(len(self.classes))
         # self.postprocessor.to(self.device)
 
     def eceOperations(self,bin_total, bin_total_correct, bin_conf_total):

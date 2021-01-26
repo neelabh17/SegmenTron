@@ -1,0 +1,7 @@
+Temp: 0.1 	 pixAcc: 94.627, mIoU: 72.626 
+Temp: 0.2 	 pixAcc: 94.499, mIoU: 72.166 
+Temp: 0.3 	 pixAcc: 94.392, mIoU: 71.779 
+Temp: 0.4 	 pixAcc: 94.307, mIoU: 71.472 
+Temp: 0.5 	 pixAcc: 94.238, mIoU: 71.220 
+Temp: 0.6 	 pixAcc: 94.180, mIoU: 71.008 
+

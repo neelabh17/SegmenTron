@@ -51,7 +51,7 @@ default_conf = {
     'norm': 'none',
     'weight': 'vector',
     "unary_weight": 1,
-    "weight_init": 0.10, # 0.5
+    "weight_init": 0.5,
 
     'trainable': False,
     'convcomp': False,
