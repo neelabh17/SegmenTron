@@ -112,7 +112,7 @@ datasets/
 weights/
 runs/
 *.pth
-calibration_library/
+# calibration_library/
 eceData/
 .vscode/
 images/
@@ -127,3 +127,4 @@ logs/
 cce_toy_logs/
 cce_logs/
 cce_cityscapes_logs/
+*.pth
