@@ -37,21 +37,32 @@ class ToySegmentation(SegmentationDataset):
     """
     
 
-    NUM_CLASS = 4
+    NUM_CLASS = 3
+    # NUM_CLASS = 4
     def __init__(self, root='datasets', split='train', mode=None, transform=None, **kwargs):
         pass
         
 
    
     def __getitem__(self, index):
-        img = torch.zeros(300, 400)
-        img[100:200, 50:150] = 1
-        img[100:150, 250:300] = 2
 
-        mask = torch.rand(300,400)
+        # Unequal boxes
+        img = torch.zeros(300, 400)
+
+        # 3 classes, 2 box
+        img[:, :200] = 1
+
+        # Equal boxes
+        # img = torch.zeros(300, 400)
+        # img[100:200, 50:150] = 1
+        # img[100:200, 250:350] = 2
+
+
+
+        # mask = torch.rand(300,400)
 
         # introducing a third class
-        img [ mask<(1/3) ] = 3
+        # img [ mask < (1/3) ] = 3
 
 
         return img, img.clone().long(), "nofile"
@@ -73,7 +84,9 @@ class ToySegmentation(SegmentationDataset):
     @property
     def classes(self):
         """Category names."""
-        return ("backGround","blue", "green", "phantom")
+        # return ("backGround","blue", "green", "phantom")
+        # return ("backGround","blue", "green")
+        return ("backGround","foreground")
 
 
 

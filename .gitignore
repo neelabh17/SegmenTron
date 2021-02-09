@@ -127,4 +127,7 @@ logs/
 cce_toy_logs/
 cce_logs/
 cce_cityscapes_logs/
-*.pth
+cce_cityscapes_conv_fcn_logs/
+cce_cityscapes_conv_logs/
+cce_toy_convTest_logs/
+cce_toy_entropy_logs/

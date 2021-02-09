@@ -4,6 +4,7 @@ from logging import log
 from torch._C import device, dtype
 from torch.utils.tensorboard import SummaryWriter
 from calibration_library.metrics import CCELoss as perimageCCE
+from calibration_library.info_entropy_loss import InfoEntropyLoss
 
 
 import os
@@ -78,9 +79,9 @@ class Evaluator(object):
             transforms.Normalize(cfg.DATASET.MEAN, cfg.DATASET.STD),
         ])
         self.lr = 2.5
-        self.prefix = f"2_boxes_3_7={self.lr}"
+        self.prefix = f"2_boxes_info_entropy_51_49_alpha=1_lr={self.lr}"
         # self.prefix = f"overfit__count_toy_experiment_3class_7_2_1_conf_loss=total_xavier_weights_xavier_bias_lr={self.lr}"
-        self.writer = SummaryWriter(log_dir= f"cce_toy_logs/{self.prefix}")
+        self.writer = SummaryWriter(log_dir= f"cce_toy_entropy_logs/{self.prefix}")
         # self.writer = SummaryWriter(log_dir= f"cce_cityscapes_logs/{self.prefix}")
         # dataset and dataloader
         val_dataset = get_segmentation_dataset(cfg.DATASET.NAME, split='val', mode='testval', transform=input_transform)
@@ -132,6 +133,7 @@ class Evaluator(object):
 
         cce_criterion = CCELoss(len(self.classes)).to(self.device)
         cross_criterion = torch.nn.CrossEntropyLoss(ignore_index=-1)
+        info_entropy_criterion = InfoEntropyLoss()
         optimizer = torch.optim.SGD([temp_weights, temp_bias], lr=self.lr)
         import time
         time_start = time.time()
@@ -141,6 +143,7 @@ class Evaluator(object):
             epoch_loss_cce_total = 0
             epoch_loss_cross_entropy_total = 0
             epoch_loss_total = 0
+            epoch_loss_info_entropy_total = 0
             for i, (images, targets, filenames) in enumerate(self.val_loader):
                 # import pdb; pdb.set_trace()
                 optimizer.zero_grad()
@@ -153,11 +156,11 @@ class Evaluator(object):
                     # outputs = model.evaluate(images)
 
                     # outputs = torch.rand(1,3,300,400)
-                    outputs = torch.ones(1,2,300,400)*(torch.Tensor([0.3,0.7]).reshape(1,-1,1,1))
+                    outputs = torch.ones(1,2,300,400)*(torch.Tensor([0.51,0.49]).reshape(1,-1,1,1))
                     # outputs = torch.ones(1,4,300,400)*(torch.Tensor([0.5,0.25,0.15, 0.1]).reshape(1,-1,1,1))
                     outputs = outputs.cuda()
-                    outputs[0,0,:, :200] = 0.7
-                    outputs[0,1,:, 200:] = 0.3
+                    outputs[0,0,:, :200] = 0.49
+                    outputs[0,1,:, 200:] = 0.51
 
                     # outputs = torch.ones(1,3,300,400)*(torch.Tensor([0.7,0.2,0.1]).reshape(1,-1,1,1))
                     # # outputs = torch.ones(1,4,300,400)*(torch.Tensor([0.5,0.25,0.15, 0.1]).reshape(1,-1,1,1))
@@ -200,10 +203,13 @@ class Evaluator(object):
 
                 loss_cce = cce_criterion.forward(outputs, targets)
                 loss_cross_entropy = cross_criterion.forward(outputs, targets)
+                loss_info_entropy = info_entropy_criterion.forward(outputs)
 
-                alpha = 0
-                total_loss = loss_cce + alpha * loss_cross_entropy
+                alpha = 1
+                total_loss = loss_cce + alpha * loss_info_entropy
+                # total_loss = loss_cross_entropy
 
+                epoch_loss_info_entropy_total += loss_info_entropy
                 epoch_loss_cce_total += loss_cce.item()
                 epoch_loss_cross_entropy_total += loss_cross_entropy.item()
                 epoch_loss_total += total_loss.item()
@@ -232,6 +238,7 @@ class Evaluator(object):
             self.writer.add_image("DifMap", dif_map, epoch, dataformats="HWC")
             
             self.writer.add_scalar(f"Cross EntropyLoss_LR", epoch_loss_cross_entropy_total, epoch)
+            self.writer.add_scalar(f"Info EntropyLoss_LR", epoch_loss_info_entropy_total, epoch)
             self.writer.add_scalar(f"CCELoss_LR", epoch_loss_cce_total, epoch)
             self.writer.add_scalar(f"Total Loss_LR", epoch_loss_total, epoch)
             self.writer.add_histogram("Weights", temp_weights, epoch)

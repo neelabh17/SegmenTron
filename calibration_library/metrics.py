@@ -296,10 +296,14 @@ class CCELoss():
     def createIdealMap(self):
         base = (np.array([ i for i in range(self.n_clases)]))
         # self.idealMap=torch.Tensor(np.tile(base , (self.output.shape[2], self.output.shape[1], 1)).T).cuda()
-        self.idealMap=torch.Tensor(np.tile(base , (400, 300, 1)).T).cuda()
+        
+        # Toy dataset
+        # self.idealMap=torch.Tensor(np.tile(base , (400, 300, 1)).T).cuda()
 
         # Cityscapes
-        # self.idealMap=torch.Tensor(np.tile(base , (2048, 1024, 1)).T).cuda()
+        self.idealMap=torch.Tensor(np.tile(base , (2048, 1024, 1)).T).cuda()
+
+        # For zurich
         # self.idealMap=torch.Tensor(np.tile(base , (1920, 1080, 1)).T).cuda()
 
         # print(self.idealMap.shape, self.output.shape)
@@ -339,7 +343,7 @@ class CCELoss():
         plt.savefig("buffer_image_table.jpg")
         import cv2
         img_table = cv2.imread("buffer_image_table.jpg")
-        print(img_table.shape)
+        # print(img_table.shape)
         
         
         # Plotting for dif map
@@ -354,7 +358,7 @@ class CCELoss():
         plt.savefig("buffer_image_dif.jpg")
         import cv2
         img_dif = cv2.imread("buffer_image_dif.jpg")
-        print(img_dif.shape)
+        # print(img_dif.shape)
         return img_table, img_dif
 
     def get_count_table_img(self, classes):
@@ -367,7 +371,7 @@ class CCELoss():
         # Plotting for table
         fig, ax = plt.subplots(figsize=(6,8))
         bin_str_label=[ "{} - {}".format(int(self.bin_lowers[i] * 100), int(self.bin_uppers[i] * 100)) for i in range( len(self.bin_lowers))]
-        im, cbar = heatmap(self.no_pred_tot.cpu().numpy(), classes, bin_str_label, ax=ax,
+        im, cbar = heatmap(100*(self.no_pred_tot/(torch.sum(self.no_pred_tot))).cpu().numpy(), classes, bin_str_label, ax=ax,
                         cmap="YlGn", cbarlabel="Accuracy")
         texts = annotate_heatmap(im, valfmt="{x:.2f}", size=7)
 
@@ -376,7 +380,7 @@ class CCELoss():
         plt.savefig("buffer_image_table.jpg")
         import cv2
         img_table = cv2.imread("buffer_image_table.jpg")
-        print(img_table.shape)
+        # print(img_table.shape)
         
         
         # Plotting for dif map not required in this case
@@ -391,7 +395,7 @@ class CCELoss():
         plt.savefig("buffer_image_dif.jpg")
         import cv2
         img_dif = cv2.imread("buffer_image_dif.jpg")
-        print(img_dif.shape)
+        # print(img_dif.shape)
         return img_table, img_dif
 
 
@@ -399,6 +403,11 @@ class CCELoss():
     def get_overall_CCELoss(self):
         avg_acc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
         avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
+
+
+        # overall_eceLoss = torch.sum(((avg_acc - avg_conf)**2))    
+        
+        # Correct implementation
         overall_eceLoss = torch.sum(((avg_acc - avg_conf)**2) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))    
 
         print("Overall ECE Loss = ", overall_eceLoss)

@@ -95,7 +95,7 @@ class CitySegmentation(SegmentationDataset):
 
     def __len__(self):
         # return min(100, len(self.images))
-        return 1
+        return 2
         # return 200
         # return len(self.images)
 

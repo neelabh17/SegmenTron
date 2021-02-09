@@ -8,6 +8,7 @@ from calibration_library.metrics import CCELoss as perimageCCE
 
 import os
 import sys
+import matplotlib.pyplot as plt
 
 cur_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.split(cur_path)[0]
@@ -53,7 +54,8 @@ class Evaluator(object):
             transforms.Normalize(cfg.DATASET.MEAN, cfg.DATASET.STD),
         ])
         self.lr = 5
-        self.prefix = f"overfit_experiment_loss=total_xavier_weights_xavier_bias_lr={self.lr}"
+        self.prefix = f"overfit_with_bin_fraction_loss=ALPHA=0.01_lr={self.lr}"
+        # self.prefix = f"overfit_with_bin_fraction_loss=no_bin_weights_ALPHA=0.5_lr={self.lr}"
         self.writer = SummaryWriter(log_dir= f"cce_cityscapes_logs/{self.prefix}")
         # dataset and dataloader
         val_dataset = get_segmentation_dataset(cfg.DATASET.NAME, split='val', mode='testval', transform=input_transform)
@@ -133,11 +135,28 @@ class Evaluator(object):
                 outputs = outputs + temp_bias
 
                 outputs = outputs.permute(0, 3, 1, 2).contiguous()
+
+                
+                # Image saving and stuff
+                save_imgs = torch.softmax(outputs, dim =1).squeeze(0)
+                for class_no, class_distri in enumerate(save_imgs):
+                    plt.clf()
+                    class_distri[0][0] = 0
+                    class_distri[0][1] = 1
+
+                    im = plt.imshow(class_distri.detach().cpu().numpy(),cmap="Greens")
+                    plt.colorbar(im)
+                    plt.savefig("temp.jpg")
+                    plt.clf()
+                    import cv2
+                    img_dif = cv2.imread("temp.jpg")
+
+                    self.writer.add_image(f"Class_{self.classes[class_no]}", img_dif, epoch, dataformats="HWC")
                 
                 loss_cce = cce_criterion.forward(outputs, targets)
                 loss_cross_entropy = cross_criterion.forward(outputs, targets)
 
-                alpha = 0.5
+                alpha = 0.01
                 total_loss = loss_cce + alpha * loss_cross_entropy
 
                 epoch_loss_cce_total += loss_cce.item()
@@ -161,8 +180,10 @@ class Evaluator(object):
             epoch_loss_cross_entropy_total /= len(self.val_loader)
             epoch_loss_total /= len(self.val_loader)
             
+            count_table_image, _ = eceEvaluator_perimage.get_count_table_img(self.classes)
             cce_table_image, dif_map= eceEvaluator_perimage.get_perc_table_img(self.classes)
             self.writer.add_image("CCE_table", cce_table_image, epoch, dataformats="HWC")
+            self.writer.add_image("Count table", count_table_image, epoch, dataformats="HWC")
             self.writer.add_image("DifMap", dif_map, epoch, dataformats="HWC")
             
             self.writer.add_scalar(f"Cross EntropyLoss_LR", epoch_loss_cross_entropy_total, epoch)
