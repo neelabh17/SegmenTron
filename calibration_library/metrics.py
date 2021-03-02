@@ -301,8 +301,11 @@ class CCELoss():
         # self.idealMap=torch.Tensor(np.tile(base , (400, 300, 1)).T).cuda()
 
         # Cityscapes
-        self.idealMap=torch.Tensor(np.tile(base , (2048, 1024, 1)).T).cuda()
-
+        # self.idealMap=torch.Tensor(np.tile(base , (2048, 1024, 1)).T).cuda()
+        
+        # cityscapes training
+        self.idealMap=torch.Tensor(np.tile(base , (769, 769, 1)).T).cuda()
+        
         # For zurich
         # self.idealMap=torch.Tensor(np.tile(base , (1920, 1080, 1)).T).cuda()
 
@@ -340,9 +343,9 @@ class CCELoss():
 
         fig.tight_layout()
         # plt.show()
-        plt.savefig("buffer_image_table.jpg")
+        plt.savefig("temp_files/buffer_image_table.jpg")
         import cv2
-        img_table = cv2.imread("buffer_image_table.jpg")
+        img_table = cv2.imread("temp_files/buffer_image_table.jpg")
         # print(img_table.shape)
         
         
@@ -355,9 +358,9 @@ class CCELoss():
 
         fig.tight_layout()
         # plt.show()
-        plt.savefig("buffer_image_dif.jpg")
+        plt.savefig("temp_files/buffer_image_dif.jpg")
         import cv2
-        img_dif = cv2.imread("buffer_image_dif.jpg")
+        img_dif = cv2.imread("temp_files/buffer_image_dif.jpg")
         # print(img_dif.shape)
         return img_table, img_dif
 
@@ -377,9 +380,9 @@ class CCELoss():
 
         fig.tight_layout()
         # plt.show()
-        plt.savefig("buffer_image_table.jpg")
+        plt.savefig("temp_files/buffer_image_table.jpg")
         import cv2
-        img_table = cv2.imread("buffer_image_table.jpg")
+        img_table = cv2.imread("temp_files/buffer_image_table.jpg")
         # print(img_table.shape)
         
         
@@ -392,9 +395,9 @@ class CCELoss():
 
         fig.tight_layout()
         # plt.show()
-        plt.savefig("buffer_image_dif.jpg")
+        plt.savefig("temp_files/buffer_image_dif.jpg")
         import cv2
-        img_dif = cv2.imread("buffer_image_dif.jpg")
+        img_dif = cv2.imread("temp_files/buffer_image_dif.jpg")
         # print(img_dif.shape)
         return img_table, img_dif
 
@@ -410,7 +413,7 @@ class CCELoss():
         # Correct implementation
         overall_eceLoss = torch.sum(((avg_acc - avg_conf)**2) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))    
 
-        print("Overall ECE Loss = ", overall_eceLoss)
+        print("Overall CCE Loss (Metrics) = ", overall_eceLoss)
 
         return overall_eceLoss
 

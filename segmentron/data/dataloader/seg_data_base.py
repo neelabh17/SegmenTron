@@ -6,6 +6,7 @@ import torchvision
 
 from PIL import Image, ImageOps, ImageFilter
 from ...config import cfg
+import mmcv
 
 __all__ = ['SegmentationDataset']
 
@@ -108,10 +109,18 @@ class SegmentationDataset(object):
         return img, mask
 
     def _img_transform(self, img):
-        return np.array(img)
+        img = np.array(img)
+        return img
 
     def _mask_transform(self, mask):
         return np.array(mask).astype('int32')
+
+    def _img_rescale_transform(self, img):
+        """Used in test and validation"""
+        img = np.array(img)
+        img = mmcv.imread(img)
+        img = mmcv.imrescale(img, cfg.TEST.IMG_SCALE)
+        return img
 
     @property
     def num_class(self):

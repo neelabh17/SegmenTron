@@ -41,7 +41,7 @@ class SegBaseModel(nn.Module):
             pred = pred[0]
         return pred
 
-    def evaluate(self, image):
+    def evaluate(self, image, give_compressed=False):
         """evaluating network with inputs and targets"""
         scales = cfg.TEST.SCALES
         flip = cfg.TEST.FLIP
@@ -70,8 +70,10 @@ class SegBaseModel(nn.Module):
             if flip:
                 outputs += _flip_image(self.forward(_flip_image(cur_img))[0])[..., :height, :width]
 
-            score = _resize_image(outputs, h, w)
-            # score = outputs
+            if give_compressed:
+                score = outputs
+            else:
+                score = _resize_image(outputs, h, w)
 
             if scores is None:
                 scores = score
@@ -126,3 +128,18 @@ def _to_tuple(size):
         return tuple((size, size))
     else:
         raise ValueError('Unsupport datatype: {}'.format(type(size)))
+
+def mmseg_evaluate(model, image, gt_seg):
+    """I already get a rescaled image, just pass into the model.
+    and interpolate to gt_seg mask size.
+    """
+    assert image.shape[0] == 1
+    assert gt_seg.shape[0] == 1
+
+    # there are no classes in gt_mask
+    batch, orig_h, orig_w = gt_seg.shape
+    
+    output = model.encode_decode(image, None)
+    output = _resize_image(output, orig_h, orig_w)
+
+    return output

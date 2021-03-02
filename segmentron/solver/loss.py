@@ -10,7 +10,51 @@ from ..models.pointrend import point_sample
 from ..data.dataloader import datasets
 from ..config import cfg
 
+from calibration_library.cce_loss import CCELoss
+from calibration_library.ece_loss import ECELoss
+
 __all__ = ['get_segmentation_loss']
+
+
+class CCETrainLoss(CCELoss):
+    def __init__(self, n_classes, n_bins = 10, **kwargs):
+        super().__init__(n_classes, n_bins=n_bins, mode = "train")
+
+    def forward(self, output, target):
+        # import pdb; pdb.set_trace()
+        loss = super().forward(output[0], target)
+
+        return dict(loss=loss)
+
+class CCETrainLoss_alpha(CCELoss):
+    def __init__(self, n_classes, alpha, n_bins = 10, ignore_index=-1,**kwargs):
+        super().__init__(n_classes, n_bins=n_bins, mode = "train")
+        self.nll = torch.nn.CrossEntropyLoss(ignore_index=ignore_index)
+        self.alpha = alpha
+        print("Using alpha value = {}".format(self.alpha))
+
+    def forward(self, output, target):
+        # import pdb; pdb.set_trace()
+        loss_cal = super().forward(output[0], target)
+        loss_nll = self.nll(output[0], target)
+        
+        loss = loss_cal + self.alpha * loss_nll
+        return dict(loss=loss), loss_cal, loss_nll    
+
+class ECETrainLoss_alpha(ECELoss):
+    def __init__(self, n_classes, alpha, n_bins = 10, ignore_index=-1,**kwargs):
+        super().__init__(n_classes, n_bins=n_bins)
+        self.nll = torch.nn.CrossEntropyLoss(ignore_index=ignore_index)
+        self.alpha = alpha
+        print("Using alpha value = {}".format(self.alpha))
+
+    def forward(self, output, target):
+        # import pdb; pdb.set_trace()
+        loss_cal = super().forward(output[0], target)
+        loss_nll = self.nll(output[0], target)
+        
+        loss = loss_cal + self.alpha * loss_nll
+        return dict(loss=loss), loss_cal, loss_nll        
 
 
 class MixSoftmaxCrossEntropyLoss(nn.CrossEntropyLoss):
@@ -390,6 +434,15 @@ class PointRendLoss(nn.CrossEntropyLoss):
 def get_segmentation_loss(model, use_ohem=False, **kwargs):
     if use_ohem:
         return MixSoftmaxCrossEntropyOHEMLoss(**kwargs)
+    elif cfg.SOLVER.LOSS_NAME == 'cce':
+        logging.info('Use CCE Loss!')
+        return CCETrainLoss(**kwargs)
+    elif cfg.SOLVER.LOSS_NAME == 'cce_alpha':
+        logging.info('Use alpha CCE Loss!')
+        return CCETrainLoss_alpha(**kwargs)
+    elif cfg.SOLVER.LOSS_NAME == 'ece_alpha':
+        logging.info('Use alpha ECE Loss!')
+        return ECETrainLoss_alpha(**kwargs)
     elif cfg.SOLVER.LOSS_NAME == 'lovasz':
         logging.info('Use lovasz loss!')
         return LovaszSoftmax(**kwargs)

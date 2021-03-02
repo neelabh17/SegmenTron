@@ -29,6 +29,8 @@ def load_model_pretrain(model):
         if cfg.TRAIN.PRETRAINED_MODEL_PATH:
             logging.info('load pretrained model from {}'.format(cfg.TRAIN.PRETRAINED_MODEL_PATH))
             state_dict_to_load = torch.load(cfg.TRAIN.PRETRAINED_MODEL_PATH)
+            if "state_dict" in state_dict_to_load:
+                state_dict_to_load = state_dict_to_load['state_dict']
             keys_wrong_shape = []
             state_dict_suitable = OrderedDict()
             state_dict = model.state_dict()

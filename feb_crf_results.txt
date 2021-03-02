@@ -1,0 +1,22 @@
+normal cityscapes:
+baseline = 78.4
+baseline + crf = 74. something
+
+foggy cityscapes:
+basline = 66
+baseline + crf = 63.190
+
+cce_loss_alpha=0.005 + crf = 63.763
+cce_loss_alpha=0 + crf = 63.515
+
+foggy cityscapes:
+baseline + crf : pixAcc: 95.050, mIoU: 67.021
+baseline : pixAcc: 94.952, mIoU: 67.163
+
+cce_loss_alpha=0
+calibrated: pixAcc: 94.640, mIoU: 65.752
+calibrated + crf : 
+
+cce_loss_alpha=0.005
+calibrated: pixAcc: 94.868, mIoU: 66.885
+calibrated + crf : pixAcc: 94.983, mIoU: 67.296

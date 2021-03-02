@@ -51,7 +51,7 @@ default_conf = {
     'norm': 'none',
     'weight': 'vector',
     "unary_weight": 1,
-    "weight_init": 0.10, # 0.5
+    "weight_init": 0.5,
 
     'trainable': False,
     'convcomp': False,
@@ -67,6 +67,7 @@ default_conf = {
         'sdims': 67, # bi_xy_std
         'schan': 3,   # bi_rgb_std # schan depend on the input scale.
                        # use schan = 13 for images in [0, 255]
+                       # 3 by kazuto    
                        # for normalized images in [-0.5, 0.5] try schan = 0.1
         'compat': 4, # bi_w
         'use_bias': False

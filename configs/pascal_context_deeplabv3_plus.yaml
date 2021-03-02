@@ -1,0 +1,29 @@
+DATASET:
+    NAME: "pascal_context"
+    MEAN: [0.485, 0.456, 0.406]
+    STD: [0.229, 0.224, 0.225]
+    MODE: 'val'
+TRAIN:
+    EPOCHS: 50
+    BATCH_SIZE: 4
+    CROP_SIZE: 480
+    BASE_SIZE: 520
+    #    PRETRAINED_MODEL_PATH: ./runs/checkpoints/DeepLabV3_Plus_xception65_coco_2019-11-25-13-09/best_model.pth
+    PRETRAINED_MODEL_PATH: "pretrained_weights/deeplabv3plus_r101-d8_480x480_40k_pascal_context_20200911_165459-d3c8a29e.pth"
+    ALPHA: 0
+TEST:
+    BATCH_SIZE: 8   # this only works in val mode, not in testval mode
+    IMG_SCALE : (520, 520)
+    CROP_SIZE: 520
+
+SOLVER:
+    LR: 0.001
+    LOSS_NAME: "cce_alpha"
+    STEP:
+        DECAY_EPOCH: [4, 8]
+
+MODEL:
+    MODEL_NAME: "DeepLabV3_Plus"
+    BACKBONE: "resnet101"
+    MMSEG_CONFIG: "mmseg-configs/deeplabv3plus_r101-d8_480x480_40k_pascal_context.py"
+

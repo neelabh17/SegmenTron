@@ -1,8 +1,4 @@
 from __future__ import print_function
-import io
-from logging import log
-from new_tools import convcrf
-from new_tools.convcrf import GaussCRF, get_default_conf
 
 import os
 import sys
@@ -14,36 +10,24 @@ sys.path.append(root_path)
 import logging
 import torch
 import torch.nn as nn
+import torch.utils.data as data
 import torch.nn.functional as F
-import cv2
-import numpy as np
-import joblib
 
+from tabulate import tabulate
 from torchvision import transforms
 from segmentron.data.dataloader import get_segmentation_dataset
+from segmentron.models.model_zoo import get_segmentation_model
 from segmentron.utils.score import SegmentationMetric
+from segmentron.utils.distributed import synchronize, make_data_sampler, make_batch_data_sampler
 from segmentron.config import cfg
 from segmentron.utils.options import parse_args
 from segmentron.utils.default_setup import default_setup
-from segmentron.models.model_zoo import get_segmentation_model
-from segmentron.utils.distributed import make_data_sampler, make_batch_data_sampler
-import torch.utils.data as data
 
-# from crfasrnn.crfrnn import CrfRnn
-from PIL import Image
-from tqdm import tqdm
-
-import os
-def makedirs(dirs):
-    if not os.path.exists(dirs):
-        os.makedirs(dirs)
-
-from convcrf import *
+import numpy as np
 
 
 class Evaluator(object):
     def __init__(self, args):
-
         self.args = args
         self.device = torch.device(args.device)
 
@@ -52,7 +36,7 @@ class Evaluator(object):
             transforms.ToTensor(),
             transforms.Normalize(cfg.DATASET.MEAN, cfg.DATASET.STD),
         ])
-        
+
         # dataset and dataloader
         val_dataset = get_segmentation_dataset(cfg.DATASET.NAME, split='val', mode='testval', transform=input_transform)
         val_sampler = make_data_sampler(val_dataset, False, args.distributed)
@@ -61,11 +45,16 @@ class Evaluator(object):
                                           batch_sampler=val_batch_sampler,
                                           num_workers=cfg.DATASET.WORKERS,
                                           pin_memory=True)
-
-        self.dataset = val_dataset
         self.classes = val_dataset.classes
-        self.metric = SegmentationMetric(val_dataset.num_class, args.distributed)
 
+        # DEFINE data for noisy
+        val_dataset_noisy = get_segmentation_dataset(cfg.DATASET.NOISY_NAME, split='val', mode='testval', transform=input_transform)
+        self.val_loader_noisy = data.DataLoader(dataset=val_dataset_noisy,
+                                          batch_sampler=val_batch_sampler,
+                                          num_workers=cfg.DATASET.WORKERS,
+                                          pin_memory=True)
+
+        # create network
         self.model = get_segmentation_model().to(self.device)
 
         if hasattr(self.model, 'encoder') and hasattr(self.model.encoder, 'named_modules') and \
@@ -76,8 +65,9 @@ class Evaluator(object):
         if args.distributed:
             self.model = nn.parallel.DistributedDataParallel(self.model,
                 device_ids=[args.local_rank], output_device=args.local_rank, find_unused_parameters=True)
-
         self.model.to(self.device)
+
+        self.metric = SegmentationMetric(val_dataset.num_class, args.distributed)
 
     def set_batch_norm_attr(self, named_modules, attr, value):
         for m in named_modules:
@@ -87,43 +77,47 @@ class Evaluator(object):
     def eval(self):
         self.metric.reset()
         self.model.eval()
-        model = self.model
-
+        if self.args.distributed:
+            model = self.model.module
+        else:
+            model = self.model
 
         logging.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
         import time
         time_start = time.time()
-        for (image, target, filename) in tqdm(self.val_loader):
+        for i, (image, target, filename) in enumerate(self.val_loader):
             image = image.to(self.device)
             target = target.to(self.device)
 
-            # print(image.shape)
             with torch.no_grad():
-                output = model.evaluate(image)
-                # output = torch.softmax(output, dim=1)
-
-                # output /= 3
-
-                # if use CRF
-                filename = filename[0]
-                # print(filename)
-                raw_image = cv2.imread(filename, cv2.IMREAD_COLOR).astype(np.float32).transpose(2, 0, 1)
-                raw_image = torch.from_numpy(raw_image).to(self.device)
-                raw_image = raw_image.unsqueeze(dim=0)
-                crf = GaussCRF(conf=get_default_conf(), shape=image.shape[2:], nclasses=len(self.classes), use_gpu=True)
-                crf = crf.to(self.device)
-                assert image.shape == raw_image.shape
-                output = crf.forward(output, raw_image)
+                output = model.evaluate(image, give_compressed=True)
             
+            print(output.shape)
+            
+            assert output.shape[0] == 1, "Make sure batch size is 1"
 
-            # print(output.shape)
-            self.metric.update(output, target)
-            pixAcc, mIoU = self.metric.get()
+            # now save the numpy file
+            folder_name = "npy_output/"
+            np.save(folder_name + os.path.basename(filename[0]) + ".npy", output.squeeze(0).cpu().numpy())
+            print("Saved {}".format(filename[0]))
 
-        pixAcc, mIoU, category_iou = self.metric.get(return_category_iou=True)
-        logging.info('Eval use time: {:.3f} second'.format(time.time() - time_start))
-        logging.info('End validation pixAcc: {:.3f}, mIoU: {:.3f}'.format(
-                pixAcc * 100, mIoU * 100))
+            # self.metric.update(output, target)
+            # pixAcc, mIoU = self.metric.get()
+            # logging.info("Sample: {:d}, validation pixAcc: {:.3f}, mIoU: {:.3f}".format(
+            #     i + 1, pixAcc * 100, mIoU * 100))
+
+        # synchronize()
+        # pixAcc, mIoU, category_iou = self.metric.get(return_category_iou=True)
+        # logging.info('Eval use time: {:.3f} second'.format(time.time() - time_start))
+        # logging.info('End validation pixAcc: {:.3f}, mIoU: {:.3f}'.format(
+        #         pixAcc * 100, mIoU * 100))
+
+        # headers = ['class id', 'class name', 'iou']
+        # table = []
+        # for i, cls_name in enumerate(self.classes):
+        #     table.append([cls_name, category_iou[i]])
+        # logging.info('Category iou: \n {}'.format(tabulate(table, headers, tablefmt='grid', showindex="always",
+        #                                                    numalign='center', stralign='center')))
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from PIL import Image
 from .seg_data_base import SegmentationDataset
 
 
-class CitySegmentation(SegmentationDataset):
+class CitySegmentation_Noisy(SegmentationDataset):
     
     """Cityscapes Semantic Segmentation Dataset.
 
@@ -40,7 +40,7 @@ class CitySegmentation(SegmentationDataset):
     NUM_CLASS = 19
 
     def __init__(self, root='datasets', split='train', mode=None, transform=None, **kwargs):
-        super(CitySegmentation, self).__init__(root, split, mode, transform, **kwargs)
+        super(CitySegmentation_Noisy, self).__init__(root, split, mode, transform, **kwargs)
         
         # self.root = os.path.join(root, self.BASE_DIR)
         print(self.root, "ok")
@@ -82,7 +82,7 @@ class CitySegmentation(SegmentationDataset):
             img, mask = self._val_sync_transform(img, mask)
         else:
             assert self.mode == 'testval'
-            img, mask = self._img_rescale_transform(img), self._mask_transform(mask)
+            img, mask = self._img_transform(img), self._mask_transform(mask)
         # general resize, normalize and toTensor
         if self.transform is not None:
             img = self.transform(img)
@@ -95,9 +95,9 @@ class CitySegmentation(SegmentationDataset):
 
     def __len__(self):
         # return min(100, len(self.images))
-        # return 50
+        return 50
         # return 200
-        return len(self.images)
+        # return len(self.images)
 
     @property
     def pred_offset(self):
@@ -119,13 +119,13 @@ def _get_city_pairs(folder, split='train'):
             for filename in files:
                 if filename.startswith('._'):
                     continue
-                # if filename.endswith('0.02.png'):
-                if filename.endswith('.png'):
+                if filename.endswith('0.01.png'):
+                # if filename.endswith('.png'):
                     imgpath = os.path.join(root, filename)
                     # print(imgpath)
                     foldername = os.path.basename(os.path.dirname(imgpath))
-                    maskname = filename.replace('leftImg8bit', 'gtFine_labelIds')
-                    # maskname = filename.replace('leftImg8bit_foggy_beta_0.02', 'gtFine_labelIds')
+                    # maskname = filename.replace('leftImg8bit', 'gtFine_labelIds')
+                    maskname = filename.replace('leftImg8bit_foggy_beta_0.01', 'gtFine_labelIds')
                     maskpath = os.path.join(mask_folder, foldername, maskname)
                     # print(maskpath)
                     if os.path.isfile(imgpath) and os.path.isfile(maskpath):
@@ -137,8 +137,8 @@ def _get_city_pairs(folder, split='train'):
         return img_paths, mask_paths
 
     if split in ('train', 'val'):
-        img_folder = os.path.join(folder, 'leftImg8bit/' + split)
-        # img_folder = os.path.join(folder, 'leftImg8bit_foggyDBF/' + split)
+        # img_folder = os.path.join(folder, 'leftImg8bit/' + split)
+        img_folder = os.path.join(folder, 'leftImg8bit_foggyDBF/' + split)
         mask_folder = os.path.join(folder, 'gtFine/' + split)
         img_paths, mask_paths = get_path_pairs(img_folder, mask_folder)
         return img_paths, mask_paths

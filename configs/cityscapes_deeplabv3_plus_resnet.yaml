@@ -4,45 +4,38 @@ DATASET:
     MEAN: [0.485, 0.456, 0.406]
     STD: [0.229, 0.224, 0.225]
     WORKERS: 8
+    NOISY_NAME: "cityscape_noisy"
 TRAIN:
-    EPOCHS: 400
+    EPOCHS: 10
     BATCH_SIZE: 4
     CROP_SIZE: 769
+    BASE_SIZE: 1025
+    # PRETRAINED_MODEL_PATH: weights/deeplabv3_plus_resnet101_segmentron.pth 
+    # PRETRAINED_MODEL_PATH: weights/finetune/DeepLabV3_Plus_resnet101_cityscape_2021-02-10-19-41/best_model.pth
+    # PRETRAINED_MODEL_PATH: weights/finetune/DeepLabV3_Plus_resnet101_cityscape_2021-02-21-19-56/10.pth # cce loss alpha = 0
+    PRETRAINED_MODEL_PATH: weights/finetune/DeepLabV3_Plus_resnet101_cityscape_2021-02-22-08-20/10.pth # cce loss alpha = 0.005
+    MODEL_SAVE_DIR: "weights/finetune"
+    ALPHA: 0.1
+
 TEST:
     BATCH_SIZE: 1
     # For zurich
     # CROP_SIZE: (1080, 1920)
 
-    CROP_SIZE: (1025, 2049)
+    # cityscapes
+    # CROP_SIZE: (1025, 2049)
+
+    IMG_SCALE: (1025, 2049)
+
     TEST_MODEL_PATH: weights/deeplabv3_plus_resnet101_segmentron.pth
+    # TEST_MODEL_PATH: weights/finetune/DeepLabV3_Plus_resnet101_cityscape_2021-02-10-19-41/15.pth
 
 SOLVER:
-    LR: 0.02
+    LR: 0.01 # initially started with 0.02, so while finetuning it should be less.
+    LOSS_NAME: "cce_alpha"
+    STEP:
+        DECAY_EPOCH: [4, 8]
 
 MODEL:
     MODEL_NAME: "DeepLabV3_Plus"
     BACKBONE: "resnet101"
-
-# CRF:
-#     ITER_MAX: 10 # used 10 iteration
-#     POS_XY_STD: 3 # θγ, default value in densecrf as 3, but in paper as 1
-#     POS_W: 3 # dont change this
-#     BI_XY_STD: 140 # θα std on prob , use grid, in paper used values from [1, 200] but it can go to bigger values as well, as seen in other repos : [1, 5, 10 , (141) (121)..... 200] here
-#     BI_RGB_STD: 13 #  θβ std on rgb values, use grid, in paper used values from [1, 50] : [1, 5, (11), (13), 18, 23, 28 till 50] here
-#     BI_W: 4 # default value in dense crf as 10 # : [(5,4,10)]
-
-CRF:
-    # ITER_MAX: 10 # used 10 iteration
-    # POS_XY_STD: 3 # θγ, default value in densecrf as 3, but in paper as 1
-    # POS_W: 3 # dont change this
-    # BI_XY_STD: 10 # θα std on prob , use grid, in paper used values from [1, 200] but it can go to bigger values as well, as seen in other repos : [1, 5, 10 , (141) (121)..... 200] here
-    # BI_RGB_STD: 1 #  θβ std on rgb values, use grid, in paper used values from [1, 50] : [1, 5, (11), (13), 18, 23, 28 till 50] here
-    # BI_W: 5 # default value in dense crf
-
-    ITER_MAX: 5 # used 10 iteration
-    POS_XY_STD: 1 # θγ, default value in densecrf as 3, but in paper as 1
-    POS_W: 3 # dont change this
-    BI_XY_STD: 67 # θα std on prob , use grid, in paper used values from [1, 200] but it can go to bigger values as well, as seen in other repos : [1, 5, 10 , (141) (121)..... 200] here
-    BI_RGB_STD: 3 #  θβ std on rgb values, use grid, in paper used values from [1, 50] : [1, 5, (11), (13), 18, 23, 28 till 50] here
-    BI_W: 4 # default value in dense crf
-

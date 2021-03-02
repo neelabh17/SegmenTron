@@ -24,7 +24,7 @@ def default_setup(args):
         torch.cuda.set_device(args.local_rank)
         torch.distributed.init_process_group(backend="nccl", init_method="env://")
         synchronize()
-
+    
     # TODO
     # if args.save_pred:
     #     outdir = '../runs/pred_pic/{}_{}_{}'.format(args.model, args.backbone, args.dataset)
@@ -32,7 +32,7 @@ def default_setup(args):
     #         os.makedirs(outdir)
 
     save_dir = cfg.TRAIN.LOG_SAVE_DIR if cfg.PHASE == 'train' else None
-    setup_logger("Segmentron", save_dir, get_rank(), filename='{}_{}_{}_{}_log.txt'.format(
+    setup_logger("Segmentron", save_dir, get_rank(), filename='{}_{}_{}_{}_log.log'.format(
         cfg.MODEL.MODEL_NAME, cfg.MODEL.BACKBONE, cfg.DATASET.NAME, cfg.TIME_STAMP))
 
     # logging.info("Using {} GPUs".format(num_gpus))

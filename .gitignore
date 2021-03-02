@@ -131,3 +131,10 @@ cce_cityscapes_conv_fcn_logs/
 cce_cityscapes_conv_logs/
 cce_toy_convTest_logs/
 cce_toy_entropy_logs/
+benchmark/
+thursday_meeting/
+thursday_meeting_temp/
+thursday_meeting_testing/
+ECE_train_both_eval/
+CCE_train_both_eval/
+cce_cityscapes_train_log/

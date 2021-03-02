@@ -3,35 +3,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
+
 # @neelabh17 implementation
 
 
-class CCELoss(torch.nn.Module):
-    def __init__(self, n_classes, n_bins = 10, mode = "eval"):
+class ECELoss(torch.nn.Module):
+    def __init__(self, n_classes, n_bins = 10):
         '''
         output = [n_Class, h , w] np array: The complete probability vector of an image
         target = [h , w] np array: The GT for the image
         n_bins = [h , w] np array: Number of bins for the Calibration division
 
         '''
-        super(CCELoss,self).__init__()
+        #n classes doesnt really matter
+        super(ECELoss,self).__init__()
         self.n_classes = n_classes
         self.n_bins = n_bins
-        self.mode = mode
-
-
         self.createBins()
-        self.createIdealMap()
 
-        self.no_pred_tot = torch.zeros(self.n_classes, self.n_bins).cuda()
-        self.no_acc_tot = torch.zeros(self.n_classes, self.n_bins).cuda()
-        self.conf_sum_tot = torch.zeros(self.n_classes, self.n_bins).cuda()
+        self.no_pred_tot = torch.zeros(1, self.n_bins).cuda()
+        self.no_acc_tot = torch.zeros(1, self.n_bins).cuda()
+        self.conf_sum_tot = torch.zeros(1, self.n_bins).cuda()
 
-    def reset(self):
-        self.no_pred_tot = torch.zeros(self.n_classes, self.n_bins).cuda()
-        self.no_acc_tot = torch.zeros(self.n_classes, self.n_bins).cuda()
-        self.conf_sum_tot = torch.zeros(self.n_classes, self.n_bins).cuda()
 
+
+        
 
     def forward(self , output, target):
         '''
@@ -45,67 +41,51 @@ class CCELoss(torch.nn.Module):
         -> Percentge of correct 
         '''
 
-        output = torch.softmax(output, dim=1)
-        
-        # print(self.idealMap.shape, target.shape)
-        assert self.idealMap.shape[1:] == target.shape[1:]
-        #  Making batch x numclass x 0 vector for appendage further
-        current_no_pred = torch.Tensor(np.array([]).reshape(output.shape[0], output.shape[1],-1)).cuda()
-        # print(current_no_pred.shape)
-        # print(output.shape)
-        current_no_acc = torch.Tensor(np.array([]).reshape(output.shape[0], output.shape[1],-1)).cuda()
-        current_conf_sum = torch.Tensor(np.array([]).reshape(output.shape[0], output.shape[1],-1)).cuda()
-        # print(output.shape)
+        output = output.softmax(dim = 1)
+        # output = [batch, n_class, h , w] np array now 
+        predicted_score, predicted_label = output.max(dim = 1)
+        # predicted_label [batch, h , w] np array now 
+
+
+        current_no_pred_tot = torch.zeros(1, self.n_bins).cuda()
+        current_no_acc_tot = torch.zeros(1, self.n_bins).cuda()
+        current_conf_sum_tot = torch.zeros(1, self.n_bins).cuda()
 
         for i, (bin_lower, bin_upper) in enumerate(zip(self.bin_lowers, self.bin_uppers)):
 
-            mask = (output> bin_lower) * (output <= bin_upper)
-            
-            output_clone = output.clone()
-            output_clone[ ~ mask] = 0
-            # import pdb; pdb.set_trace()
-            current_conf_sum_in_bin = torch.sum(output_clone, dim = (2,3))
-            # shape = [batch, classes]
-            # print(current_conf_sum_in_bin.shape)
-            current_conf_sum_in_bin = current_conf_sum_in_bin.unsqueeze(2)
-            # shape = [batch, classes, 1]
+            mask = (predicted_score> bin_lower) * (predicted_score <= bin_upper)
+            # [batch, h , w]
 
-            # print(current_conf_sum.shape, current_conf_sum_in_bin.shape)
-            current_conf_sum = torch.cat((current_conf_sum , current_conf_sum_in_bin ), dim =2)
+            conf_sum_in_bin = torch.sum(predicted_score[mask])
+            # torch item
+            current_conf_sum_tot[0][i] = conf_sum_in_bin 
 
-            
-            current_no_pred_in_bin = torch.sum( mask , dim =(2,3) ).unsqueeze(2)
-            # shape = [batch, classes, 1]
-            # print(current_no_pred.shape, current_no_pred_in_bin.shape)
-            current_no_pred = torch.cat((current_no_pred , current_no_pred_in_bin ), dim =2)
-            
-            current_no_acc_in_bin = torch.sum((mask) * (self.idealMap == target.unsqueeze(1)), dim = (2,3)).unsqueeze(2)
-            # shape = [batch, classes, 1]
-            current_no_acc = torch.cat((current_no_acc , current_no_acc_in_bin ), dim =2)
+            no_pred_in_bin = torch.sum( mask )
+            # torch item
+            current_no_pred_tot[0][i] = no_pred_in_bin 
+
+            no_acc_in_bin = torch.sum((mask) * (predicted_label == target))
+            # torch item
+
+            current_no_acc_tot[0][i] = no_acc_in_bin 
+
+        self.no_pred_tot += current_no_pred_tot
+        self.no_acc_tot += current_no_acc_tot
+        self.conf_sum_tot +=  current_conf_sum_tot
 
 
-        # reducing to one dimension, summing across all batches
-        current_no_pred = torch.sum(current_no_pred, dim = 0)
-        current_no_acc = torch.sum(current_no_acc, dim = 0)
-        current_conf_sum = torch.sum(current_conf_sum, dim = 0)
+        avg_acc = current_no_acc_tot/(current_no_pred_tot + 1e-13)
+        avg_conf = current_conf_sum_tot / (current_no_pred_tot + 1e-13)
 
-        self.no_pred_tot += current_no_pred
-        self.no_acc_tot += current_no_acc
-        self.conf_sum_tot += current_conf_sum
+        overall_EceLoss = torch.sum(torch.abs(avg_acc - avg_conf)**2 * (current_no_pred_tot/torch.sum(current_no_pred_tot)))
 
-        avg_acc = (current_no_acc)/(current_no_pred + 1e-13)
-        avg_conf = current_conf_sum / (current_no_pred + 1e-13)
-        # overall_cceLoss = torch.sum(torch.abs(avg_acc - avg_conf) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
-        # overall_cceLoss = torch.sum(((avg_acc - avg_conf)**2))
+        return overall_EceLoss
 
-        # Correct implementation
-        overall_cceLoss = torch.sum(((avg_acc - avg_conf)**2) * current_no_pred/torch.sum(current_no_pred))
+    def reset(self):
+        self.no_pred_tot = torch.zeros(1, self.n_bins).cuda()
+        self.no_acc_tot = torch.zeros(1, self.n_bins).cuda()
+        self.conf_sum_tot = torch.zeros(1, self.n_bins).cuda()
 
-        # Kernel based implementation
-        # overall_cceLoss = torch.sum((1-torch.exp((-1*((avg_acc - avg_conf)**2))/0.5)) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
-        # overall_cceLoss = torch.sum(12500*(1-torch.exp((-1*((avg_acc - avg_conf)**2))/6400)) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
-
-        return overall_cceLoss
 
     def createBins(self):
 
@@ -115,110 +95,31 @@ class CCELoss(torch.nn.Module):
         self.bin_lowers = bin_boundaries[:-1]
         self.bin_uppers = bin_boundaries[1:]
         self.avg_bin = torch.Tensor((self.bin_lowers + self.bin_uppers)/2).cuda()
-        
-    def createIdealMap(self):
-        '''
-        creates a floor (like in a biulding) of class values
-        
-        '''
-
-
-        base = (np.array([ i for i in range(self.n_classes)]))
-        # self.idealMap=torch.Tensor(np.tile(base , (self.output.shape[2], self.output.shape[1], 1)).T).cuda()
-        
-        # Toy dataset
-        # self.idealMap=torch.Tensor(np.tile(base , (400,300, 1)).T).cuda()
-
-        # Cityscapes
-        # self.idealMap=torch.Tensor(np.tile(base , (2048, 1024, 1)).T).cuda()
-
-        # ade training
-        if self.mode == "train":
-            self.idealMap=torch.Tensor(np.tile(base , (512,512, 1)).T).cuda()
-        else:
-            self.idealMap=torch.Tensor(np.tile(base , (512,512, 1)).T).cuda()
-
-        # pascal voc    
-        # if self.mode == "train":
-        #     self.idealMap=torch.Tensor(np.tile(base , (480,480, 1)).T).cuda()
-        # else:
-        #     self.idealMap=torch.Tensor(np.tile(base , (520,520, 1)).T).cuda()
-        # # cityscapes training
-
-        # if self.mode == "train":
-        #     self.idealMap=torch.Tensor(np.tile(base , (769, 769, 1)).T).cuda()
-        # else:
-        #     self.idealMap=torch.Tensor(np.tile(base , (2048, 1024, 1)).T).cuda()
-        # For zurich
-        # self.idealMap=torch.Tensor(np.tile(base , (1920, 1080, 1)).T).cuda()
-
-        # print(self.idealMap.shape, self.output.shape)
-        # assert self.idealMap.shape == self.output.shape
-
-    def get_perc_table(self, classes):
-        self.perc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
-        self.perc *= 100
-        
-        from tabulate import tabulate
-        x= list(self.perc.cpu().numpy())
-
-        for i in range(len(x)):
-            x[i]=list(x[i])
-            x[i]=[classes[i]]+list(x[i])
-        print(tabulate(x, headers = ["Classes"]+[ "{:0.2f} - {:0.2f}".format(self.bin_lowers[i] * 100, self.bin_uppers[i] * 100) for i in range( len(self.bin_lowers))]))
-        
-        return self.perc
-
+    
+    def get_diff_mean_std (self):
+        avg_acc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
+        avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
+        avg_acc *= 100
+        avg_conf *= 100
+        dif = torch.abs(avg_conf- avg_acc)
+        return dif.mean(), dif.std()
+    
     def get_diff_score(self):
         avg_acc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
         avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
-        return torch.sum (torch.abs(avg_acc-avg_conf))/(self.n_bins*self.n_classes)
+        return torch.sum (torch.abs(avg_acc-avg_conf))/(self.n_bins)
 
-    def get_overall_CCELoss(self):
+    def get_overall_ECELoss(self):
         avg_acc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
         avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
-        # overall_cceLoss = torch.sum(torch.abs(avg_acc - avg_conf) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
-        # overall_cceLoss = torch.sum(((avg_acc - avg_conf)**2))
+        overall_eceLoss = torch.sum(torch.abs(avg_acc - avg_conf) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))    
 
-        # Correct implementation
-        overall_cceLoss = torch.sum(((avg_acc - avg_conf)**2) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
+        # print("Overall ECE Loss = ", overall_eceLoss)
 
-        # Kernel based implementation
-        # overall_cceLoss = torch.sum((1-torch.exp((-1*((avg_acc - avg_conf)**2))/0.5)) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
-        # overall_cceLoss = torch.sum(12500*(1-torch.exp((-1*((avg_acc - avg_conf)**2))/6400)) * (self.no_pred_tot/torch.sum(self.no_pred_tot)))
+        return overall_eceLoss
 
-        # print("Overall CCE Loss = ", overall_cceLoss)
-
-        return overall_cceLoss
-
-        
-    def get_classVise_CCELoss(self, classes):
-        avg_acc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
-        # print(avg_acc.shape)
-        avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
-        # print(avg_conf.shape)
-
-        x = torch.sum(torch.abs(avg_acc-avg_conf) * self.no_pred_tot, dim = 1) / torch.sum(self.no_pred_tot, dim = 1)
-        x = x.reshape(-1,1)
-
-        # print(x.shape)
-
-        x=list(x)
-        from tabulate import tabulate
-        for i in range(len(x)):
-            x[i]=list(x[i])
-            x[i]=[classes[i]]+list(x[i])
-        print(tabulate(x, headers = ["Classes", "ECELoss"]))
-
-    def get_diff_mean_std (self):
-        self.perc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
-        avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
-        self.perc *= 100
-        avg_conf *= 100
-        dif = torch.abs(avg_conf- self.perc)
-        return dif.mean(), dif.std()
-
-    def get_perc_table_img(self, classes):
+    def get_perc_table_img(self, classes=["Value"]):
+        classes=["Value"]
         self.perc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
         avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
         self.perc *= 100
@@ -250,14 +151,13 @@ class CCELoss(torch.nn.Module):
         fig.tight_layout()
         # plt.show()
         plt.savefig("temp_files/buffer_image_dif.jpg")
-        plt.clf()
-
         import cv2
         img_dif = cv2.imread("temp_files/buffer_image_dif.jpg")
         # print(img_dif.shape)
         return img_table, img_dif
 
-    def get_count_table_img(self, classes):
+    def get_count_table_img(self, classes=["Value"]):
+        classes=["Value"]
         self.perc = (self.no_acc_tot)/(self.no_pred_tot + 1e-13)
         avg_conf = self.conf_sum_tot / (self.no_pred_tot + 1e-13)
         self.perc *= 100
@@ -289,8 +189,6 @@ class CCELoss(torch.nn.Module):
         fig.tight_layout()
         # plt.show()
         plt.savefig("temp_files/buffer_image_dif.jpg")
-        plt.clf()
-
         import cv2
         img_dif = cv2.imread("temp_files/buffer_image_dif.jpg")
         # print(img_dif.shape)

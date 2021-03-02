@@ -38,10 +38,10 @@ class ADE20KSegmentation(SegmentationDataset):
     BASE_DIR = 'ADEChallengeData2016'
     NUM_CLASS = 150
 
-    def __init__(self, root='datasets/ade', split='test', mode=None, transform=None, **kwargs):
+    def __init__(self, root='datasets', split='test', mode=None, transform=None, **kwargs):
         super(ADE20KSegmentation, self).__init__(root, split, mode, transform, **kwargs)
         root = os.path.join(self.root, self.BASE_DIR)
-        assert os.path.exists(root), "Please put the data in {SEG_ROOT}/datasets/ade"
+        assert os.path.exists(root), "Please put the data in {SEG_ROOT}/datasets"
         self.images, self.masks = _get_ade20k_pairs(root, split)
         assert (len(self.images) == len(self.masks))
         if len(self.images) == 0:
@@ -63,16 +63,17 @@ class ADE20KSegmentation(SegmentationDataset):
             img, mask = self._val_sync_transform(img, mask)
         else:
             assert self.mode == 'testval'
-            img, mask = self._img_transform(img), self._mask_transform(mask)
+            img, mask = self._img_rescale_transform(img), self._mask_transform(mask)
         # general resize, normalize and to Tensor
         if self.transform is not None:
             img = self.transform(img)
-        return img, mask, os.path.basename(self.images[index])
+        return img, mask, self.images[index]
 
     def _mask_transform(self, mask):
         return torch.LongTensor(np.array(mask).astype('int32') - 1)
 
     def __len__(self):
+        # return 100
         return len(self.images)
 
     @property

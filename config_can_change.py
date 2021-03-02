@@ -25,7 +25,6 @@ cfg.DATASET.IGNORE_INDEX = -1
 cfg.DATASET.WORKERS = 4
 # val dataset mode
 cfg.DATASET.MODE = 'testval'
-cfg.DATASET.NOISY_NAME = ''
 ########################### data augment ######################################
 # data augment image mirror
 cfg.AUG.MIRROR = True
@@ -45,9 +44,9 @@ cfg.TRAIN.CROP_SIZE = 769
 # train base size
 cfg.TRAIN.BASE_SIZE = 1024
 # model output dir
-cfg.TRAIN.MODEL_SAVE_DIR = 'iccv_runs/checkpoints/'
+cfg.TRAIN.MODEL_SAVE_DIR = 'runs/checkpoints/'
 # log dir
-cfg.TRAIN.LOG_SAVE_DIR = 'iccv_runs/logs/'
+cfg.TRAIN.LOG_SAVE_DIR = 'runs/logs/'
 # pretrained model for eval or finetune
 cfg.TRAIN.PRETRAINED_MODEL_PATH = ''
 # use pretrained backbone model over imagenet
@@ -60,8 +59,6 @@ cfg.TRAIN.RESUME_MODEL_PATH = ''
 cfg.TRAIN.SYNC_BATCH_NORM = True
 # save model every checkpoint-epoch
 cfg.TRAIN.SNAPSHOT_EPOCH = 10
-# used to combine 2 or more losses
-cfg.TRAIN.ALPHA = 1.0
 
 ########################### optimizer config ##################################
 # base learning rate
@@ -83,7 +80,7 @@ cfg.SOLVER.POLY.POWER = 0.9
 # step gamma
 cfg.SOLVER.STEP.GAMMA = 0.1
 # milestone of step lr scheduler
-cfg.SOLVER.STEP.DECAY_EPOCH = [10, 20]
+cfg.SOLVER.STEP.DECAY_EPOCH = [100, 200, 300]
 # warm up epochs can be float
 cfg.SOLVER.WARMUP.EPOCHS = 0.
 # warm up factor
@@ -109,15 +106,12 @@ cfg.TEST.CROP_SIZE = None
 cfg.TEST.SCALES = [1.0]
 # flip
 cfg.TEST.FLIP = False
-# test/val scale
-cfg.TEST.IMG_SCALE = (480, 480)
+
 ########################## visual config ###########################################
 # visual result output dir
 cfg.VISUAL.OUTPUT_DIR = './runs/visual/'
 
 ########################## model #######################################
-#mmseg config
-cfg.MODEL.MMSEG_CONFIG= ''
 # model name
 cfg.MODEL.MODEL_NAME = ''
 # model backbone

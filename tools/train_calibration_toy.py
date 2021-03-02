@@ -152,10 +152,10 @@ class Evaluator(object):
                 for class_no, class_distri in enumerate(save_imgs):
                     plt.clf()
                     plt.imshow(class_distri.detach().cpu().numpy(),cmap="nipy_spectral")
-                    plt.savefig("temp.jpg")
+                    plt.savefig("temp_files/temp.jpg")
                     plt.clf()
                     import cv2
-                    img_dif = cv2.imread("temp.jpg")
+                    img_dif = cv2.imread("temp_files/temp.jpg")
 
                     self.writer.add_image(f"Class_{class_no}", img_dif, epoch, dataformats="HWC")
 

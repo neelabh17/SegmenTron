@@ -48,8 +48,8 @@ if __name__ == '__main__':
     if os.path.exists(default_dir):
         print('{} is already exist!'.format(default_dir))
     else:
-        try:
-            os.symlink(_TARGET_DIR, default_dir)
-        except Exception as e:
-            print(e)
+        # try:
+        #     os.symlink(_TARGET_DIR, default_dir)
+        # except Exception as e:
+        #     print(e)
         download_ade(_TARGET_DIR, overwrite=False)

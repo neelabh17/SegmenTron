@@ -7,7 +7,7 @@ import logging
 
 from ..config import cfg
 
-def save_checkpoint(model, epoch, optimizer=None, lr_scheduler=None, is_best=False):
+def save_checkpoint(model, epoch, optimizer=None, lr_scheduler=None, is_best=False, mode= "iou"):
     """Save Checkpoint"""
     directory = os.path.expanduser(cfg.TRAIN.MODEL_SAVE_DIR)
     directory = os.path.join(directory, '{}_{}_{}_{}'.format(cfg.MODEL.MODEL_NAME, cfg.MODEL.BACKBONE,
@@ -18,7 +18,7 @@ def save_checkpoint(model, epoch, optimizer=None, lr_scheduler=None, is_best=Fal
     filename = os.path.join(directory, filename)
     model_state_dict = model.module.state_dict() if hasattr(model, 'module') else model.state_dict()
     if is_best:
-        best_filename = 'best_model.pth'
+        best_filename = f'best_model_mode={mode}_epoch={epoch}.pth'
         best_filename = os.path.join(directory, best_filename)
         torch.save(model_state_dict, best_filename)
     else:

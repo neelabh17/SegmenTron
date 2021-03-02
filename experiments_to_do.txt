@@ -1,0 +1,6 @@
+1. only use cce loss
+2. use cce loss + aplha * cross entropy
+3. use different lrs to train.
+
+compare original and foggy accuracy scores.
+,, ,, ,, calibration table gradient in both.

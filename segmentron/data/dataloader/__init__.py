@@ -8,7 +8,8 @@ from .pascal_voc import VOCSegmentation
 from .pascal_aug import VOCAugSegmentation
 from .sbu_shadow import SBUSegmentation
 from .toy import ToySegmentation
-
+from .cityscapes_noisy import CitySegmentation_Noisy
+from .pascal_context import VOCContextSegmentation
 datasets = {
     'ade20k': ADE20KSegmentation,
     'pascal_voc': VOCSegmentation,
@@ -16,7 +17,9 @@ datasets = {
     'coco': COCOSegmentation,
     'cityscape': CitySegmentation,
     'sbu': SBUSegmentation,
-    "toy": ToySegmentation
+    "toy": ToySegmentation,
+    "cityscape_noisy": CitySegmentation_Noisy,
+    'pascal_context': VOCContextSegmentation
 }
 
 
